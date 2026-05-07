@@ -1,0 +1,34 @@
+# Env / secrets — never commit
+.env
+.env.local
+*.pem
+*.p8
+*.jks
+*.keystore
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/launch.json.example
+*.swp
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Node (landing page)
+web/node_modules/
+web/.astro/
+web/dist/
+
+# Supabase local
+supabase/.branches/
+supabase/.temp/
+
+# Tooling caches
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
