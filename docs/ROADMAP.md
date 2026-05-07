@@ -56,17 +56,32 @@ The build is sliced so that **after every phase, the app is usable end-to-end** 
 
 **Done when:** Samed doesn't have to log commits or steps manually for a full week.
 
-## Phase 4 — Movies, Workouts, Motorcycle (2–3 days)
+## Phase 4 — Movies, Workouts, Motorcycle, Meals (3 days)
 
 **Goal:** the diary covers everything that actually happens in the day.
 
-- [ ] Migration `0003_richer_logs.sql`: `workouts`, `workout_sets`, `movies_watched`, `motorcycle_rides`.
+- [ ] Migration `0003_richer_logs.sql`: `workouts`, `workout_sets`, `movies_watched`, `motorcycle_rides`, `meals`.
 - [ ] Workouts feature: set/rep entry sheet, exercise picker (curated list of ~30 lifts).
 - [ ] Movies feature: TMDB search → quick-add with poster + year + 1–5 star rating.
+- [ ] Meals feature: quick-add with title + optional macros + optional photo.
 - [ ] Motorcycle quick-add: distance + route tag (free-text, autocomplete from history).
-- [ ] Diary writer prompt updated to mention movies + the CF Moto 250NK by name.
+- [ ] Diary writer prompt updated to mention movies + the CF Moto 250NK by name + meals when notable.
 
 **Done when:** an entry can authentically say "the evening closed with Blade Runner."
+
+## Phase 4.5 — Music & Daily Photo (2 days)
+
+**Goal:** the soundtrack and the snapshot.
+
+- [ ] Migration `0004_music_photo.sql`: `music_listens`, `media_assets` extensions.
+- [ ] Spotify OAuth (PKCE) wired via `app_links` deep-link callback.
+- [ ] Edge Function `spotify-poll` running every 30 min via `pg_cron` → fills `music_listens`.
+- [ ] Top-of-day track derivation in the nightly summary (play count + duration).
+- [ ] `[+ PHOTO]` chip on the active diary page → `image_picker` → compress → upload to `covers/`.
+- [ ] 1-bit dither shader on cover photo render so it sits inside the CRT aesthetic.
+- [ ] Diary writer prompt updated for `music` block and `cover_photo.present`.
+
+**Done when:** an entry says "the day moved to Radiohead in the background" and the cover photo is dithered into the page.
 
 ## Phase 5 — Voice notes & German A2 loop (3–4 days)
 
@@ -80,16 +95,29 @@ The build is sliced so that **after every phase, the app is usable end-to-end** 
 
 **Done when:** Samed records a thought in German on the couch, and the next morning's page shows what he said, what he meant, and how to fix it.
 
-## Phase 6 — Skill Tree side route (2 days)
+## Phase 6 — Skill Tree + integrations health (2 days)
 
-**Goal:** light gamification, kept off the home screen.
+**Goal:** the `STATUS` tab earns its place.
 
 - [ ] Skill Tree screen (radial layout, 5 nodes: Logic, Vitality, Linguistics, Culture, Academic).
 - [ ] XP formula: rolling 30-day domain activity. Each entry's `top_skill` adds bonus XP.
 - [ ] Pixel-art level-up animation. The one place in the app where motion is *delight* rather than confirmation.
-- [ ] Linkable from a `[STATUS]` button in the page chrome — never a tab.
+- [ ] Integrations health panel: per-source `OK / STALE / FAILED` chips with last-poll timestamp.
 
-**Done when:** opening the skill tree at the end of a productive month feels rewarding.
+**Done when:** opening STATUS at the end of a productive month both feels rewarding and tells you which pollers are healthy.
+
+## Phase 7 — Landing page (Digital Time Capsule) (2 days)
+
+**Goal:** a portfolio-grade marketing site that doubles as the install funnel.
+
+- [ ] Astro 4.x + Tailwind project at `web/` (separate from `app/`).
+- [ ] Boot sequence hero (Canvas-rendered, ~80 lines of JS, lazy-loaded as an island).
+- [ ] Feature directory blocks: `DIR /CODE`, `DIR /BODY`, `DIR /MIND`, `DIR /CULTURE`, `DIR /MEMORY`.
+- [ ] Live-stream demo: scrolling preview of pre-recorded diary entries with the typewriter effect.
+- [ ] Glowing CTA: `[ INITIALIZE_SYSTEM ]` → App Store + Play Store badges.
+- [ ] Deployed on Vercel free tier. Lighthouse score ≥ 95 on Performance + Accessibility.
+
+**Done when:** the landing page can survive a Hacker News front-page spike on the free tier.
 
 ## Phase 7+ — Quality of life (rolling)
 

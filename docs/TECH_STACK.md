@@ -24,12 +24,16 @@ Every dependency is justified. No library lands here just because it's popular �
 |----------------------------------|------------------------------------------------|
 | `health`                         | HealthKit + Health Connect unified — steps, calories, workouts. |
 | `record`                         | Voice memo capture (.m4a). Smaller and simpler than `flutter_sound`. |
-| `audioplayers`                   | Playback of saved voice notes.                 |
-| `photo_manager`                  | Reads device photo library to pick the day's cover. No Google Photos API needed. |
+| `audioplayers`                   | Playback of voice notes + 8-bit click track + power-on / confirm SFX. |
+| `image_picker`                   | **Daily photo upload (v1 cover).** Camera or gallery pick → compress → Supabase Storage. |
 | `image`                          | Compress cover photo to 1440px / q80 before upload. |
+| `photo_manager`                  | v2 only — auto-pick from device library on opt-in. Off by default in v1. |
 | `geolocator`                     | Foreground-only coarse tag for motorcycle rides. No background tracking. |
 | `flutter_local_notifications`    | Evening mood-prompt nudge (~21:00).            |
+| `flutter_secure_storage`         | Spotify OAuth refresh token + Supabase session. |
+| `app_links`                      | Spotify OAuth deep-link redirect (`memoirlog://spotify-callback`). |
 | `dio`                            | HTTP for GitHub poller (proxied via Edge Fn) and TMDB search. Interceptor for retry. |
+| `HapticFeedback` (Flutter built-in) | Mechanical-keyboard feel on every primary tap. No extra package. |
 
 ### UI
 | Package              | Why                                                            |
@@ -88,6 +92,10 @@ Every dependency is justified. No library lands here just because it's popular �
 
 ### Movie metadata
 - **TMDB API** (`api.themoviedb.org/3`). Free for personal use. Used for title search + poster URL only — no analytics.
+
+### Music metadata
+- **Spotify Web API** (`api.spotify.com/v1`). OAuth 2.0 with PKCE, scope `user-read-recently-played` only. Polled by `spotify-poll` Edge Function every 30 minutes.
+- **YT Music** has no official API; v2 plan is the Last.fm public scrobble feed as a bridge. v1 is Spotify-or-manual.
 
 ## Repository layout (target)
 

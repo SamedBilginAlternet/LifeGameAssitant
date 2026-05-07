@@ -91,6 +91,47 @@ Optional flicker layer: 30Hz square wave at 2% brightness modulation. Toggle in 
 - The `> ` prompt prefix on the body marks AI-generated text.
 - 24px gap between days on the timeline. No card shadows, no hover states.
 
+## Bottom navigation
+
+Three tabs, period-correct chrome. The bar is a single 56pt strip with box-drawing dividers, no background fill — it sits directly on `bg.canvas`.
+
+```
+─────────────────────────────────────────────────
+  [ TIMELINE ]   [ + CREATE ]   [ STATUS ]
+─────────────────────────────────────────────────
+```
+
+| Tab          | Route             | Contents                                        |
+|--------------|-------------------|-------------------------------------------------|
+| `TIMELINE`   | `/`               | The diary — infinite vertical scroll.           |
+| `+ CREATE`   | `/capture`        | Voice memo (default action), then quick-add chips for meal, mood, movie, motorcycle, workout. The mic button is the largest target. |
+| `STATUS`     | `/status`         | Skill Tree (5 nodes) + integrations health (GitHub, Spotify, Health, Storage). |
+
+Active tab gets a leading `>` cursor (`> [ TIMELINE ]`) and full-bright `fg.bright`; inactive tabs sit at `fg.dim`. Switching plays a soft `confirm.wav` and the redraws cascade column-by-column over 180ms.
+
+## Boot sequence
+
+The first launch after a cold start (or after the user manually pulls down on the Timeline) replays the boot animation. Skipped on warm starts to keep daily use fast.
+
+```
+MEMOIR_LOG v1.0 BOOT
+> CHECKING STORAGE........... OK
+> CONNECTING TO SUPABASE..... OK
+> SYNCING ENTRIES (42 days).. OK
+> NARRATOR LINK............... ONLINE
+> READY.
+
+  [ENTER] TO BEGIN_
+```
+
+- Each line types in over ~250ms with the click track.
+- The `OK` lights up at full brightness when the underlying check resolves.
+- If a check fails, the line shows `FAIL — [R] RETRY` instead. The boot does not block: tapping ENTER skips the failed check and the app degrades gracefully (offline mode, cached entries).
+- Animation duration capped at **2.4s total** even if some checks take longer (they finish in the background after the boot completes).
+- Disabled if `MediaQuery.disableAnimations == true` — the app boots straight to the timeline.
+
+The same animation is used in the landing page hero — see `LANDING_PAGE.md`.
+
 ## Pixel meters
 
 8-bit progress bars built from filled (`█`) and empty (`░`) blocks, snapped to 16 cells. Filling animates block-by-block on first paint, 400ms total. Over-target is shown by changing the trailing block to `▓` rather than overflowing.
@@ -134,6 +175,20 @@ Implementation:
 - Settings → Audio toggle (default **ON**). Per-session mute via long-press anywhere on a diary page.
 - Respects iOS silent switch and Android DnD automatically.
 - Volume capped at -12 dB; cannot be jarring even in a quiet room.
+
+## Haptics
+
+Subtle, not chatty. Every haptic uses Flutter's built-in `HapticFeedback` — no external package.
+
+| Trigger                          | Pattern                  | API                                  |
+|----------------------------------|--------------------------|--------------------------------------|
+| Primary tap (action button)      | Mechanical-key click     | `HapticFeedback.lightImpact()`       |
+| Tab switch                       | Soft tick                | `HapticFeedback.selectionClick()`    |
+| Save / commit succeeded          | Two-pulse confirmation   | `HapticFeedback.mediumImpact()` ×2 (50ms apart) |
+| Error (Groq fail, network)       | Single firm thump        | `HapticFeedback.heavyImpact()`       |
+| Long-press toggles (mute, etc.)  | Long buzz                | `HapticFeedback.vibrate()`           |
+
+Toggleable globally in Settings → Haptics. Default **ON**. The combination of a 6ms click sound + a `lightImpact` on each typewriter character is *not* recommended — too noisy. Click track plays per-char; haptic fires only on the user-initiated **tap that started** the typewriter, not on each glyph.
 
 ## States (in terminal voice)
 

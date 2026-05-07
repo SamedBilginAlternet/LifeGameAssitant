@@ -100,6 +100,39 @@ Children of `workouts`.
 | `rpe`         | int         | 1–10, nullable                            |
 | `set_index`   | int         |                                           |
 
+### `meals`
+One row per meal. Macros optional — title alone is fine.
+
+| Column         | Type        | Notes                                     |
+|----------------|-------------|-------------------------------------------|
+| `id`           | uuid PK     |                                           |
+| `user_id`      | uuid        |                                           |
+| `local_date`   | date        |                                           |
+| `meal_type`    | text        | `breakfast` \| `lunch` \| `dinner` \| `snack` |
+| `title`        | text        | "Tavuklu salata", "oatmeal w/ banana"     |
+| `calories`     | int         | nullable                                  |
+| `protein_g`    | numeric     | nullable                                  |
+| `carbs_g`      | numeric     | nullable                                  |
+| `photo_path`   | text        | optional Storage path                     |
+| `eaten_at`     | timestamptz |                                           |
+
+### `music_listens`
+Filled by the Spotify poller. One row per played track.
+
+| Column         | Type        | Notes                                     |
+|----------------|-------------|-------------------------------------------|
+| `id`           | uuid PK     |                                           |
+| `user_id`      | uuid        |                                           |
+| `local_date`   | date        |                                           |
+| `source`       | text        | `spotify` \| `lastfm` \| `manual`         |
+| `track_id`     | text        | Spotify track URI or scrobble fingerprint |
+| `track_title`  | text        |                                           |
+| `artist`       | text        |                                           |
+| `album`        | text        | nullable                                  |
+| `duration_sec` | int         |                                           |
+| `played_at`    | timestamptz |                                           |
+| UNIQUE         | `(user_id, source, track_id, played_at)` to dedupe poll overlap |
+
 ### `movies_watched`
 
 | Column        | Type        | Notes                                     |
@@ -160,7 +193,8 @@ Cover photos and any other media attached to entries.
 | `id`           | uuid PK     |                                          |
 | `user_id`      | uuid        |                                          |
 | `local_date`   | date        |                                          |
-| `kind`         | text        | `cover` \| `voice` \| `movie_poster`     |
+| `kind`         | text        | `cover` \| `voice` \| `movie_poster` \| `meal_photo` |
+| `source`       | text        | `user_upload` \| `auto_pick` \| `pixel_icon` (for cover only) |
 | `storage_path` | text        | full path in Supabase Storage            |
 | `width`        | int         |                                          |
 | `height`       | int         |                                          |
@@ -175,6 +209,8 @@ Third-party secrets (Vault-encrypted).
 | `github_token` | text      | read-only PAT                           |
 | `github_login` | text      |                                         |
 | `tmdb_token`   | text      | optional, read-only                     |
+| `spotify_refresh_token` | text | OAuth refresh, scope `user-read-recently-played` |
+| `spotify_user_id`       | text |                                          |
 
 ### `integration_runs`
 Audit log for the pollers + cron jobs.
@@ -195,7 +231,10 @@ create index on github_events    (user_id, local_date);
 create index on fitness_data     (user_id, local_date);
 create index on workouts         (user_id, local_date);
 create index on workout_sets     (workout_id);
+create index on meals            (user_id, local_date);
 create index on movies_watched   (user_id, local_date);
+create index on music_listens    (user_id, local_date);
+create index on music_listens    (user_id, played_at desc);   -- top-of-day query
 create index on learning_logs    (user_id, local_date);
 create index on motorcycle_rides (user_id, local_date);
 create index on voice_notes      (user_id, local_date);

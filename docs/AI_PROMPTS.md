@@ -63,11 +63,15 @@ OUTPUT RULES
    zero, say nothing about that domain. Do not invent data.
 2. Weave numbers into the narrative; never list them. "12 commits", not
    "Commits: 12".
-3. If a movie was watched, mention the title in italics-style emphasis
-   (no markdown, just natural prose: '...the evening closed with Blade Runner.').
+3. If a movie was watched, mention the title in natural prose
+   (no markdown: '...the evening closed with Blade Runner.').
 4. If a motorcycle ride is logged, mention the CF Moto 250NK by name once.
 5. If a German voice note exists, mention it briefly — do not transcribe.
-6. End with a one-line classification of which Skill Tree grew most:
+6. If a meal stands out (high protein, notable, or photographed), mention
+   it in passing. Do not list every meal.
+7. If `top_track` is present, name the artist (and track if it dominates
+   the listen count) — '...the day moved to Radiohead in the background.'
+8. End with a one-line classification of which Skill Tree grew most:
    one of `logic`, `vitality`, `linguistics`, `culture`, `academic`.
 
 OUTPUT FORMAT (strict JSON)
@@ -119,9 +123,18 @@ EXAMPLE
   "workouts": [
     { "name": "Push Day", "duration_min": 60, "total_volume_kg": 4200 }
   ],
+  "meals": [
+    { "type": "lunch",  "title": "Tavuklu salata", "protein_g": 45 },
+    { "type": "dinner", "title": "salmon + rice",  "protein_g": 38 }
+  ],
   "movies_watched": [
     { "title": "Blade Runner", "year": 1982, "rating": 5, "medium": "streaming" }
   ],
+  "music": {
+    "top_track":  { "title": "Weird Fishes", "artist": "Radiohead", "play_count": 4 },
+    "top_artist": { "name": "Radiohead", "play_count": 9 },
+    "total_minutes": 92
+  },
   "learning_logs": [
     { "track": "german",  "minutes": 25, "topic": "Modalverben" },
     { "track": "masters", "minutes": 40, "topic": "Distributed Systems" }
@@ -132,6 +145,7 @@ EXAMPLE
   "voice_notes": [
     { "language": "de", "english": "I learned that 'müssen' is harder than I thought." }
   ],
+  "cover_photo": { "present": true, "dominant_hex": "#3B2A14" },
   "mood_score": 8,
   "note": null
 }
@@ -143,7 +157,7 @@ Every field is optional. The Edge Function strips empty arrays and null fields b
 
 ```json
 {
-  "body": "Today the engineer pushed twelve commits to Echo-App-Mobile, the most active repo of the week, and it felt like the architecture finally settled into place. The push session in the gym moved 4,200 kg of total volume and protein closed the day at 185 g, with the steps holding at 9.2k despite a long stretch at the keyboard. Twenty-five minutes of German finally cracked Modalverben, and the evening closed with Blade Runner — quiet, deliberate, the right film for a Tuesday. The ride home on the 250NK was uneventful, which is its own kind of good.",
+  "body": "Today the engineer pushed twelve commits to Echo-App-Mobile, the most active repo of the week, and it felt like the architecture finally settled into place. The push session moved 4,200 kg of total volume, protein closed at 185 g across a steady run of meals, and the steps held at 9.2k despite a long stretch at the keyboard. Radiohead carried the background, Weird Fishes on repeat, while twenty-five minutes of German finally cracked Modalverben and the evening closed with Blade Runner — the right film for a Tuesday. The ride home on the 250NK was uneventful, which is its own kind of good.",
   "top_skill": "logic"
 }
 ```

@@ -9,11 +9,13 @@
 │                           │    │                            │    │                           │
 │  • Manual quick-add       │    │  • daily_logs              │    │  • Nightly cron 23:50     │
 │  • GitHub poller          │    │  • workouts                │    │  • Aggregates day's rows  │
-│  • Health Connect / Kit   │    │  • movies_watched          │    │  • Picks cover photo      │
-│  • Movie picker (TMDB)    │    │  • learning_logs           │    │  • Calls Groq → entry     │
-│  • Voice memo (German)    │    │  • motorcycle_rides        │    │  • Whisper for voice DE   │
-│  • Photo picker           │    │  • voice_notes             │    │                           │
-│  • Mood slider            │    │  • media_assets            │    │                           │
+│  • Health Connect / Kit   │    │  • meals                   │    │  • Resolves cover photo   │
+│  • Movie picker (TMDB)    │    │  • movies_watched          │    │  • Calls Groq → entry     │
+│  • Spotify poller         │    │  • music_listens           │    │  • Whisper for voice DE   │
+│  • Voice memo (German)    │    │  • learning_logs           │    │                           │
+│  • Daily photo upload     │    │  • motorcycle_rides        │    │                           │
+│  • Mood slider            │    │  • voice_notes             │    │                           │
+│                           │    │  • media_assets            │    │                           │
 └───────────────────────────┘    │  • entries  ◀──────────────┼────┤                           │
             ↑                    └────────────────────────────┘    └───────────────────────────┘
             │                                  │
@@ -60,23 +62,45 @@ Endpoint: `https://api.groq.com/openai/v1/chat/completions`. Request shape is id
 | GitHub events      | Every 30 min               | Edge Fn polls `/users/:user/events`              |
 | Steps / calories   | App foreground             | `health` package → batch upsert to `fitness_data`|
 | Workouts           | After session (manual)     | Set/rep form → `workouts` row                    |
+| **Meals**          | Quick-add per meal         | Title + macros (protein/cal/carbs) → `meals` row. Optional photo attached. |
 | Movies             | Quick-add → TMDB search    | Pick result → `movies_watched` with `tmdb_id`    |
+| **Music (Spotify)**| Every 30 min               | Edge Fn polls `/me/player/recently-played` → `music_listens`. Top track derived nightly. |
 | Motorcycle rides   | Manual: distance + tag     | `motorcycle_rides` row                           |
 | Voice notes (DE)   | Mic button                 | Local file → Storage → Whisper → translation row |
-| Cover photo        | App pull at 23:45          | `photo_manager` → favorited or first-of-day → upload to Storage |
+| **Daily photo**    | User tap "add photo"       | `image_picker` → compress → Storage → `media_assets(kind='cover')` |
 | Mood               | Evening notification       | Slider 1–10 → `daily_logs.mood_score`            |
 
-## Cover photo selection
+## Cover photo
 
-At 23:45 (5 minutes before the cron), the app runs a local job:
+The "Time Capsule" needs one image per day. Three resolution paths in priority order:
 
-1. Read photos taken between 00:00 and 23:45 in the device's local timezone.
-2. Prefer photos marked Favorite. If none, take the first photo of the day.
-3. Compress to 1440px long edge, JPEG q80.
-4. Upload to Supabase Storage bucket `covers/`. Insert `media_assets` row.
-5. The `daily-summary` cron then knows to attach this asset to the entry.
+1. **User-uploaded (v1 default).** A `[+ PHOTO]` chip on the active day opens `image_picker`. Photo is compressed to 1440px long edge / JPEG q80, uploaded to private Storage bucket `covers/`, row written in `media_assets(kind='cover')`. The user can replace it any time before that day's entry is generated.
+2. **Pixel-icon fallback.** If no photo by cron time, the daily-summary function picks the most representative icon from the curated 16×16 pixel set based on the day's dominant domain (top_skill). The entry still has a "cover" — just a glyph instead of a photo.
+3. **Auto-pick (v2).** Optional setting that uses `photo_manager` to read the device library at 23:45 and pre-fill a Favorite or first-of-day shot. User confirms before upload — never a silent capture.
 
-If no photos exist, the entry uses a generated parchment texture as cover — never a blank header.
+Photos are rendered through a 1-bit dither shader on the diary page so they sit visually inside the CRT aesthetic instead of fighting it. The original is always kept; the dither is a render-time effect.
+
+## Spotify integration
+
+OAuth 2.0 with PKCE. Login flow once, refresh token stored in Supabase Vault.
+
+```
+Settings → Integrations → Connect Spotify
+  → in-app browser opens accounts.spotify.com/authorize
+  → redirect back to memoirlog://spotify-callback?code=...
+  → Edge Fn `spotify-exchange` swaps code → tokens → Vault
+```
+
+A `spotify-poll` Edge Function runs every 30 minutes via `pg_cron`:
+
+1. Refresh the access token if expired.
+2. Hit `GET /me/player/recently-played?limit=50&after=<last_poll>`.
+3. Upsert each play into `music_listens` (dedupe on `played_at`).
+4. The nightly summary computes "top of day" by play count + total duration.
+
+Scope requested: `user-read-recently-played` only. We do not control playback, do not read playlists, do not see followers.
+
+YT Music has no official API. v2 plan: optional Last.fm scrobbler bridge — user enables Last.fm scrobbling from any source, we poll Last.fm's public `user.getRecentTracks` endpoint.
 
 ## Voice → German practice flow
 
