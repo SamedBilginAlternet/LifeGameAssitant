@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:memoir_log/app/theme/crt_theme.dart';
 import 'package:memoir_log/features/diary/domain/entities/entry.dart';
+import 'package:memoir_log/features/diary/presentation/widgets/typewriter_text.dart';
 
 /// One day = one terminal-window page on the timeline.
 class DiaryPage extends StatelessWidget {
@@ -67,8 +68,11 @@ class _Body extends StatelessWidget {
     final crt = context.crt;
     switch (entry.status) {
       case EntryStatus.ok:
-        return Text(
-          '> ${entry.body ?? ''}',
+        return TypewriterText(
+          // Keying by entry.id means scrolling back doesn't re-replay
+          // clicks; only the first reveal types out.
+          key: ValueKey('entry-${entry.id}'),
+          text: '> ${entry.body ?? ''}',
           style: crt.bodyType,
         );
       case EntryStatus.empty:
