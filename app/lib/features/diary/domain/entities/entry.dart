@@ -12,6 +12,7 @@ class Entry {
     required this.status,
     required this.generatedAt,
     this.model,
+    this.stats,
   });
 
   final String id;
@@ -21,6 +22,11 @@ class Entry {
   final EntryStatus status;
   final DateTime generatedAt;
   final String? model;
+
+  /// The aggregate that was sent to Groq to produce this entry. Shape
+  /// matches supabase/functions/daily-summary/aggregate.ts. Used to
+  /// render the stat strip under the body. Null on empty/failed days.
+  final Map<String, dynamic>? stats;
 
   bool get isReady => status == EntryStatus.ok && body != null && body!.isNotEmpty;
 

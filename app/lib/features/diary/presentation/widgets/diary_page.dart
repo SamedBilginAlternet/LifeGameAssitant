@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:memoir_log/app/theme/crt_theme.dart';
 import 'package:memoir_log/features/diary/domain/entities/entry.dart';
+import 'package:memoir_log/features/diary/presentation/widgets/pixel_meter.dart';
 import 'package:memoir_log/features/diary/presentation/widgets/typewriter_text.dart';
 
 /// One day = one terminal-window page on the timeline.
@@ -28,8 +29,54 @@ class DiaryPage extends StatelessWidget {
           _Header(date: dateFmt, skill: entry.topSkill),
           const SizedBox(height: 16),
           _Body(entry: entry),
+          if (entry.stats != null && entry.status == EntryStatus.ok) ...[
+            const SizedBox(height: 16),
+            _StatStrip(stats: entry.stats!),
+          ],
         ],
       ),
+    );
+  }
+}
+
+/// Renders pixel meters for the metrics that exist in the day's stats.
+/// Targets are sensible defaults — Phase 4+ will read user-set goals
+/// from the profile.
+class _StatStrip extends StatelessWidget {
+  const _StatStrip({required this.stats});
+  final Map<String, dynamic> stats;
+
+  @override
+  Widget build(BuildContext context) {
+    final crt = context.crt;
+    final fitness = stats['fitness_data'] as Map<String, dynamic>?;
+    final learning = stats['learning_logs'] as List<dynamic>?;
+    final github = stats['github_events'] as Map<String, dynamic>?;
+
+    final commits = (github?['commits'] as num?)?.toInt() ?? 0;
+    final steps = (fitness?['steps'] as num?) ?? 0;
+    final protein = (fitness?['protein_g'] as num?) ?? 0;
+    final germanMinutes = (learning ?? [])
+        .whereType<Map<String, dynamic>>()
+        .where((e) => e['track'] == 'german')
+        .fold<num>(0, (sum, e) => sum + ((e['minutes'] as num?) ?? 0));
+
+    final rows = <Widget>[];
+    if (commits > 0) rows.add(PixelMeter(label: 'commits', value: commits, target: 10, unit: ''));
+    if (steps > 0) rows.add(PixelMeter(label: 'steps', value: steps, target: 10000, unit: ''));
+    if (protein > 0) rows.add(PixelMeter(label: 'protein', value: protein, target: 180, unit: 'g'));
+    if (germanMinutes > 0) {
+      rows.add(PixelMeter(label: 'german', value: germanMinutes, target: 30, unit: 'm'));
+    }
+
+    if (rows.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(height: 1, color: crt.fgGhost),
+        const SizedBox(height: 8),
+        ...rows,
+      ],
     );
   }
 }

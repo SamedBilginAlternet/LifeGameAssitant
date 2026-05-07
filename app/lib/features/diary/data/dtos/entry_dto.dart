@@ -12,6 +12,7 @@ class EntryDto {
     this.body,
     this.topSkill,
     this.model,
+    this.stats,
   });
 
   final String id;
@@ -22,6 +23,7 @@ class EntryDto {
   final String? body;
   final String? topSkill;
   final String? model;
+  final Map<String, dynamic>? stats;
 
   factory EntryDto.fromJson(Map<String, dynamic> json) {
     return EntryDto(
@@ -33,6 +35,7 @@ class EntryDto {
       topSkill: json['top_skill'] as String?,
       model: json['model'] as String?,
       generatedAt: DateTime.parse(json['generated_at'] as String),
+      stats: json['stats_json'] as Map<String, dynamic>?,
     );
   }
 
@@ -45,6 +48,7 @@ class EntryDto {
       status: EntryStatusX.fromString(status),
       generatedAt: generatedAt,
       model: model,
+      stats: stats,
     );
   }
 }
