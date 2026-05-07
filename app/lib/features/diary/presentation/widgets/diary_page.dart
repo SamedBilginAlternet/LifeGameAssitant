@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:memoir_log/app/theme/crt_theme.dart';
 import 'package:memoir_log/features/cover_photo/presentation/widgets/cover_photo_chip.dart';
+import 'package:memoir_log/features/cover_photo/presentation/widgets/cover_photo_view.dart';
 import 'package:memoir_log/features/diary/domain/entities/entry.dart';
 import 'package:memoir_log/features/diary/presentation/widgets/pixel_meter.dart';
 import 'package:memoir_log/features/diary/presentation/widgets/typewriter_text.dart';
@@ -40,10 +41,9 @@ class DiaryPage extends StatelessWidget {
             const SizedBox(height: 16),
             _StatStrip(stats: entry.stats!),
           ],
-          if (isToday) ...[
-            const SizedBox(height: 16),
-            CoverPhotoChip(localDate: entry.localDate),
-          ],
+          const SizedBox(height: 8),
+          CoverPhotoView(localDate: entry.localDate),
+          if (isToday) CoverPhotoChip(localDate: entry.localDate),
         ],
       ),
     );
