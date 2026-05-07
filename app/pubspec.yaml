@@ -1,0 +1,63 @@
+name: memoir_log
+description: "MEMOIR_LOG — the diary that writes itself."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.8.0 <4.0.0'
+  flutter: '>=3.32.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Backend
+  supabase_flutter: ^2.5.6
+
+  # State management + DI
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+
+  # Routing
+  go_router: ^14.2.7
+
+  # Functional error handling — Either<Failure, T>
+  fpdart: ^1.1.0
+
+  # Models
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+
+  # UI
+  google_fonts: ^6.2.1
+  animated_text_kit: ^4.2.2
+  flutter_animate: ^4.5.0
+  shimmer: ^3.0.0
+  cached_network_image: ^3.3.1
+
+  # Audio (Phase 2 — wired but not yet used in Phase 0)
+  audioplayers: ^6.1.0
+
+  # Misc
+  intl: ^0.20.2
+  uuid: ^4.4.2
+
+  flutter_localizations:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  mocktail: ^1.0.4
+  build_runner: ^2.4.13
+  freezed: ^2.5.7
+  json_serializable: ^6.8.0
+  riverpod_generator: ^2.4.3
+  custom_lint: ^0.6.5
+  riverpod_lint: ^2.3.13
+
+flutter:
+  uses-material-design: true
+  # Fonts come from google_fonts at runtime — no asset bundling needed.
+  # Pixel icon sprites land in Phase 2.
