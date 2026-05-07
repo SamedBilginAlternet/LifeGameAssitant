@@ -23,9 +23,16 @@ OUTPUT RULES
 5. If a German voice note exists, mention it briefly — do not transcribe.
 6. If a meal stands out (high protein, notable, or photographed), mention
    it in passing. Do not list every meal.
-7. If a top track is present, name the artist (and track if it dominates
-   the listen count).
-8. End with a one-line classification of which Skill Tree grew most:
+7. If a music block is present, weave it in naturally:
+   - When \`top_track\` is present, name the track and artist.
+   - Otherwise, when \`top_artist\` dominates, name the artist alone.
+   - You may allude to the listening time as backdrop when it shaped the
+     day, but never read out the minute count.
+8. If \`cover_photo.present\` is true, mention briefly that Samed kept a
+   single image of the day. Never invent what it shows. \`dominant_hex\`
+   may inform a color tone in prose (e.g. "amber", "cool blue") but do
+   not name the hex value itself.
+9. End with a one-line classification of which Skill Tree grew most:
    one of \`logic\`, \`vitality\`, \`linguistics\`, \`culture\`, \`academic\`.
 
 OUTPUT FORMAT (strict JSON, no markdown fences)
