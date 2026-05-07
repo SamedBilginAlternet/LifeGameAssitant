@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  flutter:
+    name: Flutter — analyze + test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: pub get
+        run: flutter pub get
+
+      - name: format check
+        run: dart format --set-exit-if-changed lib test
+
+      - name: analyze
+        run: flutter analyze --fatal-infos
+
+      - name: test
+        run: flutter test
+
+  domain-purity:
+    name: Domain layer must not import data/ or flutter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: grep
+        run: |
+          set -e
+          if find app/lib -path '*/domain/*' -name '*.dart' \
+              -exec grep -lE "package:flutter|/data/" {} +; then
+            echo "::error::Domain layer leaked an import from flutter or data/"
+            exit 1
+          fi
