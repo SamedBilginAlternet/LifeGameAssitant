@@ -25,7 +25,7 @@ export function pruneEmpty<T>(input: T): T {
 
 export interface DayAggregate {
   date: string;
-  github_events?: { commits: number; repos: string[] };
+  github_events?: { commits: number; prs_opened: number; prs_merged: number; repos: string[] };
   fitness_data?: Record<string, number>;
   learning_logs?: Array<{ track: string; minutes: number; topic?: string | null }>;
   mood_score?: number;
@@ -39,7 +39,7 @@ export async function aggregateDay(
   userId: string,
   date: string,
 ): Promise<DayAggregate> {
-  const [daily, fitness, learning] = await Promise.all([
+  const [daily, fitness, learning, github] = await Promise.all([
     supabase
       .from('daily_logs')
       .select('mood_score, note')
@@ -56,6 +56,11 @@ export async function aggregateDay(
       .select('track, minutes, topic')
       .eq('user_id', userId)
       .eq('local_date', date),
+    supabase
+      .from('github_events')
+      .select('event_type, repo, commits')
+      .eq('user_id', userId)
+      .eq('local_date', date),
   ]);
 
   const fitness_data: Record<string, number> = {};
@@ -63,8 +68,25 @@ export async function aggregateDay(
     fitness_data[row.metric as string] = Number(row.value);
   }
 
+  let github_events: DayAggregate['github_events'] | undefined;
+  const ghRows = github.data ?? [];
+  if (ghRows.length > 0) {
+    let commits = 0;
+    let prs_opened = 0;
+    let prs_merged = 0;
+    const repoSet = new Set<string>();
+    for (const r of ghRows as Array<{ event_type: string; repo: string; commits: number }>) {
+      if (r.event_type === 'push') commits += r.commits ?? 0;
+      if (r.event_type === 'pr_opened') prs_opened++;
+      if (r.event_type === 'pr_merged') prs_merged++;
+      repoSet.add(r.repo);
+    }
+    github_events = { commits, prs_opened, prs_merged, repos: [...repoSet] };
+  }
+
   const out: DayAggregate = {
     date,
+    github_events,
     fitness_data,
     learning_logs: (learning.data ?? []) as DayAggregate['learning_logs'],
     mood_score: daily.data?.mood_score ?? undefined,
