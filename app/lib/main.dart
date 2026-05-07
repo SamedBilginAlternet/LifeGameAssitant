@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:memoir_log/app/router.dart';
 import 'package:memoir_log/app/theme/crt_theme.dart';
+import 'package:memoir_log/app/theme/scanline_overlay.dart';
 import 'package:memoir_log/app/theme/theme_provider.dart';
 import 'package:memoir_log/app/theme/themes.dart';
 import 'package:memoir_log/core/env.dart';
@@ -49,6 +50,7 @@ class MemoirLogApp extends ConsumerWidget {
         CrtPalette.phosphor => buildPhosphorTheme(),
       },
       routerConfig: router,
+      builder: (context, child) => ScanlineOverlay(child: child ?? const SizedBox.shrink()),
     );
   }
 }

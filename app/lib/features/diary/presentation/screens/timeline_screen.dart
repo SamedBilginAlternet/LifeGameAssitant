@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:memoir_log/app/theme/crt_theme.dart';
 import 'package:memoir_log/core/supabase_providers.dart';
 import 'package:memoir_log/features/diary/domain/entities/entry.dart';
-import 'package:memoir_log/features/diary/domain/failures/diary_failure.dart';
 import 'package:memoir_log/features/diary/presentation/providers/diary_providers.dart';
 import 'package:memoir_log/features/diary/presentation/widgets/diary_page.dart';
 
@@ -143,4 +142,3 @@ class _ErrorBlock extends StatelessWidget {
   }
 }
 
-DiaryFailure _typed(Object f) => f as DiaryFailure;

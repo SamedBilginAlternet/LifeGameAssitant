@@ -60,4 +60,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   # Fonts come from google_fonts at runtime — no asset bundling needed.
-  # Pixel icon sprites land in Phase 2.
+  # Pixel icon sprites land in Phase 4.
+  assets:
+    - assets/audio/
+    - shaders/scanlines.frag
