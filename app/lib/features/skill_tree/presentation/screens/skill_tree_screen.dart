@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:memoir_log/app/theme/crt_theme.dart';
+import 'package:memoir_log/features/integrations/presentation/widgets/integrations_health_panel.dart';
 import 'package:memoir_log/features/skill_tree/domain/entities/skill.dart';
 import 'package:memoir_log/features/skill_tree/presentation/providers/skill_tree_providers.dart';
 import 'package:memoir_log/features/skill_tree/presentation/widgets/radial_skill_tree.dart';
@@ -43,24 +44,40 @@ class SkillTreeScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               Expanded(
-                child: snapshot.when(
-                  loading: () => Center(
-                    child: Text('> COMPUTING XP...', style: crt.bodyType.copyWith(color: crt.fgDim)),
-                  ),
-                  error: (e, _) => Center(
-                    child: Text(
-                      '> ERROR: ${e.toString().toUpperCase()}',
-                      style: crt.bodyType.copyWith(color: crt.fgDim),
-                    ),
-                  ),
-                  data: (either) => either.fold(
-                    (failure) => Center(
-                      child: Text(
-                        '> ERROR: ${failure.message.toUpperCase()}',
-                        style: crt.bodyType.copyWith(color: crt.fgDim),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      snapshot.when(
+                        loading: () => Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Text(
+                            '> COMPUTING XP...',
+                            style: crt.bodyType.copyWith(color: crt.fgDim),
+                          ),
+                        ),
+                        error: (e, _) => Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Text(
+                            '> ERROR: ${e.toString().toUpperCase()}',
+                            style: crt.bodyType.copyWith(color: crt.fgDim),
+                          ),
+                        ),
+                        data: (either) => either.fold(
+                          (failure) => Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Text(
+                              '> ERROR: ${failure.message.toUpperCase()}',
+                              style: crt.bodyType.copyWith(color: crt.fgDim),
+                            ),
+                          ),
+                          (snap) => _Body(snapshot: snap),
+                        ),
                       ),
-                    ),
-                    (snap) => _Body(snapshot: snap),
+                      const SizedBox(height: 32),
+                      const IntegrationsHealthPanel(),
+                      const SizedBox(height: 24),
+                    ],
                   ),
                 ),
               ),

@@ -114,4 +114,27 @@ class IntegrationsRemoteDataSource {
       'spotify_last_polled': null,
     }).eq('user_id', userId);
   }
+
+  // ── Health ─────────────────────────────────────────────────────────
+
+  /// Returns the most recent integration_runs row per kind for the
+  /// given user. The repository converts these into
+  /// IntegrationHealthStatus values.
+  Future<List<Map<String, dynamic>>> latestRuns({required String userId}) async {
+    // No `distinct on` in supabase_dart yet, so pull a small window
+    // (last ~24h, capped at 50 rows) and reduce client-side. Cheaper
+    // than a full table scan and accurate enough for "latest run".
+    final since = DateTime.now()
+        .subtract(const Duration(hours: 24))
+        .toUtc()
+        .toIso8601String();
+    final rows = await _client
+        .from('integration_runs')
+        .select('kind, status, error, ran_at')
+        .eq('user_id', userId)
+        .gte('ran_at', since)
+        .order('ran_at', ascending: false)
+        .limit(50);
+    return List<Map<String, dynamic>>.from(rows as List<dynamic>);
+  }
 }

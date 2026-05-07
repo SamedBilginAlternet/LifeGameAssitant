@@ -4,6 +4,7 @@ import 'package:memoir_log/core/failure.dart';
 import 'package:memoir_log/core/supabase_providers.dart';
 import 'package:memoir_log/features/integrations/data/datasources/integrations_remote_data_source.dart';
 import 'package:memoir_log/features/integrations/data/repositories/integrations_repository_impl.dart';
+import 'package:memoir_log/features/integrations/domain/entities/integration_health.dart';
 import 'package:memoir_log/features/integrations/domain/repositories/integrations_repository.dart';
 
 final integrationsRemoteDataSourceProvider =
@@ -30,4 +31,9 @@ final githubIntegrationProvider =
 final spotifyIntegrationProvider =
     FutureProvider<Either<Failure, SpotifyIntegration>>((ref) async {
   return ref.read(integrationsRepositoryProvider).currentSpotify();
+});
+
+final integrationsHealthProvider =
+    FutureProvider<Either<Failure, List<IntegrationHealth>>>((ref) async {
+  return ref.read(integrationsRepositoryProvider).healthSnapshot();
 });

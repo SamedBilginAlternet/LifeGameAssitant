@@ -6,6 +6,7 @@ import 'package:memoir_log/core/env.dart';
 import 'package:memoir_log/core/failure.dart';
 import 'package:memoir_log/features/integrations/data/datasources/integrations_remote_data_source.dart';
 import 'package:memoir_log/features/integrations/data/datasources/spotify_oauth.dart';
+import 'package:memoir_log/features/integrations/domain/entities/integration_health.dart';
 import 'package:memoir_log/features/integrations/domain/repositories/integrations_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -130,6 +131,59 @@ class IntegrationsRepositoryImpl implements IntegrationsRepository {
     try {
       await _remote.clearSpotify(userId: _currentUserId());
       return const Right(null);
+    } catch (e) {
+      return Left(_classify(e));
+    }
+  }
+
+  // ── Health ─────────────────────────────────────────────────────────
+
+  static const _staleAfter = Duration(minutes: 90);
+  static const _knownKinds = ['github_poll', 'spotify_poll'];
+
+  @override
+  Future<Either<Failure, List<IntegrationHealth>>> healthSnapshot() async {
+    try {
+      final rows = await _remote.latestRuns(userId: _currentUserId());
+
+      // Reduce to the most recent run per kind.
+      final latestByKind = <String, Map<String, dynamic>>{};
+      for (final row in rows) {
+        final kind = row['kind'] as String?;
+        if (kind == null) continue;
+        latestByKind.putIfAbsent(kind, () => row);
+      }
+
+      final now = DateTime.now();
+      final out = <IntegrationHealth>[];
+      for (final kind in _knownKinds) {
+        final row = latestByKind[kind];
+        if (row == null) {
+          out.add(IntegrationHealth(
+            kind: kind,
+            status: IntegrationHealthStatus.never,
+          ));
+          continue;
+        }
+        final ranAt = DateTime.tryParse(row['ran_at'] as String? ?? '');
+        final status = row['status'] as String?;
+        final error = row['error'] as String?;
+        final IntegrationHealthStatus mapped;
+        if (status == 'error') {
+          mapped = IntegrationHealthStatus.failed;
+        } else if (ranAt != null && now.difference(ranAt) > _staleAfter) {
+          mapped = IntegrationHealthStatus.stale;
+        } else {
+          mapped = IntegrationHealthStatus.ok;
+        }
+        out.add(IntegrationHealth(
+          kind: kind,
+          status: mapped,
+          lastRunAt: ranAt,
+          error: error,
+        ));
+      }
+      return Right(out);
     } catch (e) {
       return Left(_classify(e));
     }
