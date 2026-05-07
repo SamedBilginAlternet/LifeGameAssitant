@@ -72,6 +72,14 @@ class _AppBar extends ConsumerWidget {
             icon: Text('[+]', style: crt.uiType.copyWith(color: crt.fgBright)),
           ),
           IconButton(
+            tooltip: 'Status',
+            onPressed: () {
+              HapticFeedback.selectionClick();
+              context.push('/skills');
+            },
+            icon: Text('[*]', style: crt.uiType.copyWith(color: crt.fgDim)),
+          ),
+          IconButton(
             tooltip: 'Settings',
             onPressed: () {
               HapticFeedback.selectionClick();

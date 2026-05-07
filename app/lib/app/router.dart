@@ -12,6 +12,7 @@ import 'package:memoir_log/features/diary/presentation/screens/timeline_screen.d
 import 'package:memoir_log/features/integrations/presentation/screens/connect_github_screen.dart';
 import 'package:memoir_log/features/integrations/presentation/screens/connect_spotify_screen.dart';
 import 'package:memoir_log/features/settings/presentation/screens/settings_screen.dart';
+import 'package:memoir_log/features/skill_tree/presentation/screens/skill_tree_screen.dart';
 
 /// Top-level router. Auth state drives redirects — when the user signs
 /// in or out, the redirect callback runs and the router lands on the
@@ -74,6 +75,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/integrations/spotify',
         builder: (context, state) => const ConnectSpotifyScreen(),
+      ),
+      GoRoute(
+        path: '/skills',
+        builder: (context, state) => const SkillTreeScreen(),
       ),
     ],
   );
