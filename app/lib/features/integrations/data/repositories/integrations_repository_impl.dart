@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:memoir_log/core/env.dart';
 import 'package:memoir_log/core/failure.dart';
 import 'package:memoir_log/features/integrations/data/datasources/integrations_remote_data_source.dart';
+import 'package:memoir_log/features/integrations/data/datasources/spotify_oauth.dart';
 import 'package:memoir_log/features/integrations/domain/repositories/integrations_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -11,11 +13,14 @@ class IntegrationsRepositoryImpl implements IntegrationsRepository {
   IntegrationsRepositoryImpl({
     required IntegrationsRemoteDataSource remote,
     required String Function() currentUserId,
+    SpotifyOAuth? spotifyOAuth,
   })  : _remote = remote,
-        _currentUserId = currentUserId;
+        _currentUserId = currentUserId,
+        _spotifyOAuth = spotifyOAuth ?? SpotifyOAuth();
 
   final IntegrationsRemoteDataSource _remote;
   final String Function() _currentUserId;
+  final SpotifyOAuth _spotifyOAuth;
 
   Failure _classify(Object e) {
     if (e is PostgrestException) return ServerFailure(e.message);
@@ -27,6 +32,8 @@ class IntegrationsRepositoryImpl implements IntegrationsRepository {
     if (e is SocketException) return const NetworkFailure('offline');
     return UnknownFailure(e.toString());
   }
+
+  // ── GitHub ─────────────────────────────────────────────────────────
 
   @override
   Future<Either<Failure, GitHubIntegration>> currentGithub() async {
@@ -65,6 +72,63 @@ class IntegrationsRepositoryImpl implements IntegrationsRepository {
   Future<Either<Failure, void>> disconnectGithub() async {
     try {
       await _remote.deleteGithub(userId: _currentUserId());
+      return const Right(null);
+    } catch (e) {
+      return Left(_classify(e));
+    }
+  }
+
+  // ── Spotify ────────────────────────────────────────────────────────
+
+  @override
+  Future<Either<Failure, SpotifyIntegration>> currentSpotify() async {
+    try {
+      final row = await _remote.readSpotify(userId: _currentUserId());
+      if (row == null) {
+        return const Right(SpotifyIntegration(userId: null, connected: false));
+      }
+      final lastPolled = row['spotify_last_polled'];
+      return Right(SpotifyIntegration(
+        userId: row['spotify_user_id'] as String?,
+        connected: row['spotify_refresh_token'] != null,
+        lastPolledAt: lastPolled is String ? DateTime.tryParse(lastPolled) : null,
+      ));
+    } catch (e) {
+      return Left(_classify(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, SpotifyIntegration>> connectSpotify() async {
+    if (!Env.spotifyConfigured) {
+      return const Left(AuthFailure('SPOTIFY_CLIENT_ID not set'));
+    }
+    try {
+      final auth = await _spotifyOAuth.authorize(
+        clientId: Env.spotifyClientId,
+        redirectUri: Env.spotifyRedirectUri,
+      );
+      final spotifyUserId = await _remote.exchangeSpotifyCode(
+        code: auth.code,
+        codeVerifier: auth.codeVerifier,
+        redirectUri: Env.spotifyRedirectUri,
+      );
+      return Right(SpotifyIntegration(
+        userId: spotifyUserId,
+        connected: true,
+        lastPolledAt: null,
+      ));
+    } on FormatException catch (e) {
+      return Left(AuthFailure(e.message));
+    } catch (e) {
+      return Left(_classify(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> disconnectSpotify() async {
+    try {
+      await _remote.clearSpotify(userId: _currentUserId());
       return const Right(null);
     } catch (e) {
       return Left(_classify(e));

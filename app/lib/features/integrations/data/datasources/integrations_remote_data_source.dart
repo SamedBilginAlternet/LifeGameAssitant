@@ -8,6 +8,8 @@ class IntegrationsRemoteDataSource {
   final SupabaseClient _client;
   final Dio _dio;
 
+  // ── GitHub ─────────────────────────────────────────────────────────
+
   Future<Map<String, dynamic>?> readGithub({required String userId}) async {
     return await _client
         .from('integrations')
@@ -58,5 +60,58 @@ class IntegrationsRemoteDataSource {
       throw const FormatException('github returned no login');
     }
     return login;
+  }
+
+  // ── Spotify ────────────────────────────────────────────────────────
+
+  Future<Map<String, dynamic>?> readSpotify({required String userId}) async {
+    return await _client
+        .from('integrations')
+        .select(
+          'spotify_refresh_token, spotify_user_id, spotify_last_polled',
+        )
+        .eq('user_id', userId)
+        .maybeSingle();
+  }
+
+  /// Posts the auth code + verifier to the spotify-token-exchange Edge
+  /// Function. The function exchanges the code with Spotify, fetches
+  /// /me, and upserts the integrations row server-side. Returns the
+  /// resulting `spotify_user_id`.
+  Future<String> exchangeSpotifyCode({
+    required String code,
+    required String codeVerifier,
+    required String redirectUri,
+  }) async {
+    final res = await _client.functions.invoke(
+      'spotify-token-exchange',
+      body: {
+        'code': code,
+        'code_verifier': codeVerifier,
+        'redirect_uri': redirectUri,
+      },
+    );
+    final data = res.data;
+    if (data is! Map) {
+      throw const FormatException('spotify-token-exchange returned no body');
+    }
+    final ok = data['ok'] == true;
+    if (!ok) {
+      final err = data['error']?.toString() ?? 'unknown';
+      throw FormatException('spotify-token-exchange failed: $err');
+    }
+    final userId = data['spotify_user_id']?.toString();
+    if (userId == null || userId.isEmpty) {
+      throw const FormatException('spotify-token-exchange returned no user id');
+    }
+    return userId;
+  }
+
+  Future<void> clearSpotify({required String userId}) async {
+    await _client.from('integrations').update({
+      'spotify_refresh_token': null,
+      'spotify_user_id': null,
+      'spotify_last_polled': null,
+    }).eq('user_id', userId);
   }
 }

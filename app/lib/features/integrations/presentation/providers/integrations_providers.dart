@@ -26,3 +26,8 @@ final githubIntegrationProvider =
     FutureProvider<Either<Failure, GitHubIntegration>>((ref) async {
   return ref.read(integrationsRepositoryProvider).currentGithub();
 });
+
+final spotifyIntegrationProvider =
+    FutureProvider<Either<Failure, SpotifyIntegration>>((ref) async {
+  return ref.read(integrationsRepositoryProvider).currentSpotify();
+});

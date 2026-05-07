@@ -22,18 +22,39 @@ flutter pub get
 
 The app reads its config from `--dart-define` flags. Two are required:
 
-| Var                  | Where to find it                                               |
-|----------------------|----------------------------------------------------------------|
-| `SUPABASE_URL`       | Supabase dashboard → Project Settings → API → Project URL      |
-| `SUPABASE_ANON_KEY`  | Supabase dashboard → Project Settings → API → anon public key  |
+| Var                       | Required | Where to find it                                                |
+|---------------------------|:--------:|-----------------------------------------------------------------|
+| `SUPABASE_URL`            | yes      | Supabase dashboard → Project Settings → API → Project URL       |
+| `SUPABASE_ANON_KEY`       | yes      | Supabase dashboard → Project Settings → API → anon public key   |
+| `SPOTIFY_CLIENT_ID`       | optional | developer.spotify.com → Dashboard → App → Client ID             |
+| `SPOTIFY_REDIRECT_URI`    | optional | Defaults to `memoirlog://spotify-callback`                      |
+
+If you skip `SPOTIFY_CLIENT_ID`, the Spotify connect screen disables itself with a clear status line.
 
 ### Run command
 
 ```bash
 flutter run \
   --dart-define=SUPABASE_URL=https://<project>.supabase.co \
-  --dart-define=SUPABASE_ANON_KEY=<anon_key>
+  --dart-define=SUPABASE_ANON_KEY=<anon_key> \
+  --dart-define=SPOTIFY_CLIENT_ID=<spotify_client_id>
 ```
+
+### Deep-link / URL scheme config
+
+The Spotify OAuth callback uses the `memoirlog://` scheme. After running
+`flutter create`, add the scheme to the generated native files so the
+callback returns to the app:
+
+- **iOS** — `app/ios/Runner/Info.plist`: add a `CFBundleURLTypes` entry
+  with `CFBundleURLSchemes = ["memoirlog"]`.
+- **Android** — `app/android/app/src/main/AndroidManifest.xml`: inside
+  the main activity, add a `<intent-filter>` with
+  `android:scheme="memoirlog"` and `android:host="spotify-callback"`.
+
+Don't forget to also register the same redirect URI
+(`memoirlog://spotify-callback`) inside the Spotify dashboard for the
+app, otherwise the OAuth flow rejects with `INVALID_REDIRECT_URI`.
 
 ### VS Code launch config
 

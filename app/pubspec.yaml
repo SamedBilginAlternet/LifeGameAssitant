@@ -38,6 +38,11 @@ dependencies:
   # Audio (Phase 2 — wired but not yet used in Phase 0)
   audioplayers: ^6.1.0
 
+  # OAuth (Phase 4.5+ — Spotify connect flow uses flutter_web_auth_2;
+  # crypto generates the PKCE verifier/challenge.)
+  flutter_web_auth_2: ^4.0.0
+  crypto: ^3.0.5
+
   # Misc
   intl: ^0.20.2
   uuid: ^4.4.2

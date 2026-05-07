@@ -7,15 +7,32 @@ class GitHubIntegration {
   final bool connected;
 }
 
-abstract class IntegrationsRepository {
-  /// Reads the current row, if any.
-  Future<Either<Failure, GitHubIntegration>> currentGithub();
+class SpotifyIntegration {
+  const SpotifyIntegration({
+    required this.userId,
+    required this.connected,
+    this.lastPolledAt,
+  });
+  final String? userId;
+  final bool connected;
+  final DateTime? lastPolledAt;
+}
 
-  /// Validates the token against GET /user, then upserts the row.
+abstract class IntegrationsRepository {
+  // GitHub --------------------------------------------------------------
+  Future<Either<Failure, GitHubIntegration>> currentGithub();
   Future<Either<Failure, GitHubIntegration>> connectGithub({
     required String token,
   });
-
-  /// Removes the row entirely.
   Future<Either<Failure, void>> disconnectGithub();
+
+  // Spotify -------------------------------------------------------------
+  Future<Either<Failure, SpotifyIntegration>> currentSpotify();
+
+  /// Performs the PKCE auth-code exchange via the
+  /// `spotify-token-exchange` Edge Function and persists the refresh
+  /// token. Returns the resulting [SpotifyIntegration] on success.
+  Future<Either<Failure, SpotifyIntegration>> connectSpotify();
+
+  Future<Either<Failure, void>> disconnectSpotify();
 }

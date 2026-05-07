@@ -10,6 +10,7 @@ import 'package:memoir_log/features/capture/presentation/screens/log_ride_screen
 import 'package:memoir_log/features/capture/presentation/screens/log_workout_screen.dart';
 import 'package:memoir_log/features/diary/presentation/screens/timeline_screen.dart';
 import 'package:memoir_log/features/integrations/presentation/screens/connect_github_screen.dart';
+import 'package:memoir_log/features/integrations/presentation/screens/connect_spotify_screen.dart';
 import 'package:memoir_log/features/settings/presentation/screens/settings_screen.dart';
 
 /// Top-level router. Auth state drives redirects — when the user signs
@@ -69,6 +70,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/integrations/github',
         builder: (context, state) => const ConnectGithubScreen(),
+      ),
+      GoRoute(
+        path: '/integrations/spotify',
+        builder: (context, state) => const ConnectSpotifyScreen(),
       ),
     ],
   );
