@@ -80,4 +80,74 @@ class CaptureRepositoryImpl implements CaptureRepository {
           topic: topic,
         ));
   }
+
+  @override
+  Future<Either<Failure, void>> logMeal({
+    required String mealType,
+    required String title,
+    int? calories,
+    num? proteinG,
+    num? carbsG,
+  }) {
+    return _guard(() => _remote.insertMeal(
+          userId: _currentUserId(),
+          localDate: _today(),
+          mealType: mealType,
+          title: title,
+          calories: calories,
+          proteinG: proteinG,
+          carbsG: carbsG,
+        ));
+  }
+
+  @override
+  Future<Either<Failure, void>> logMovie({
+    required String title,
+    int? releaseYear,
+    int? rating,
+    String? medium,
+  }) {
+    return _guard(() => _remote.insertMovie(
+          userId: _currentUserId(),
+          localDate: _today(),
+          title: title,
+          releaseYear: releaseYear,
+          rating: rating,
+          medium: medium,
+        ));
+  }
+
+  @override
+  Future<Either<Failure, void>> logRide({
+    required num distanceKm,
+    int? durationMin,
+    String? routeTag,
+    String? notes,
+  }) {
+    return _guard(() => _remote.insertRide(
+          userId: _currentUserId(),
+          localDate: _today(),
+          distanceKm: distanceKm,
+          durationMin: durationMin,
+          routeTag: routeTag,
+          notes: notes,
+        ));
+  }
+
+  @override
+  Future<Either<Failure, void>> logWorkout({
+    required String name,
+    int? durationMin,
+    num? totalVolumeKg,
+    String? notes,
+  }) {
+    return _guard(() => _remote.insertWorkout(
+          userId: _currentUserId(),
+          localDate: _today(),
+          name: name,
+          durationMin: durationMin,
+          totalVolumeKg: totalVolumeKg,
+          notes: notes,
+        ));
+  }
 }

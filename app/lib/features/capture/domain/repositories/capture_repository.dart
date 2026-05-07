@@ -22,4 +22,37 @@ abstract class CaptureRepository {
     required int minutes,
     String? topic,
   });
+
+  /// Inserts a meals row.
+  Future<Either<Failure, void>> logMeal({
+    required String mealType,
+    required String title,
+    int? calories,
+    num? proteinG,
+    num? carbsG,
+  });
+
+  /// Inserts a movies_watched row.
+  Future<Either<Failure, void>> logMovie({
+    required String title,
+    int? releaseYear,
+    int? rating,
+    String? medium,
+  });
+
+  /// Inserts a motorcycle_rides row.
+  Future<Either<Failure, void>> logRide({
+    required num distanceKm,
+    int? durationMin,
+    String? routeTag,
+    String? notes,
+  });
+
+  /// Inserts a workouts row (sets are captured separately in Phase 4+).
+  Future<Either<Failure, void>> logWorkout({
+    required String name,
+    int? durationMin,
+    num? totalVolumeKg,
+    String? notes,
+  });
 }

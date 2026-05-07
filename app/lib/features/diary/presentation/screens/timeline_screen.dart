@@ -64,10 +64,10 @@ class _AppBar extends ConsumerWidget {
           Text('MEMOIR_LOG  v1.0', style: crt.dateHeaderType),
           const Spacer(),
           IconButton(
-            tooltip: 'Capture',
+            tooltip: 'Add to today',
             onPressed: () {
               HapticFeedback.selectionClick();
-              context.push('/capture');
+              context.push('/log');
             },
             icon: Text('[+]', style: crt.uiType.copyWith(color: crt.fgBright)),
           ),
