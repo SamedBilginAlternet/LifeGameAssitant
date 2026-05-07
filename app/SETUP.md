@@ -56,6 +56,19 @@ Don't forget to also register the same redirect URI
 (`memoirlog://spotify-callback`) inside the Spotify dashboard for the
 app, otherwise the OAuth flow rejects with `INVALID_REDIRECT_URI`.
 
+### Photo library permission
+
+The cover-photo chip uses `image_picker`. After `flutter create`, add
+to the generated native files:
+
+- **iOS** — `app/ios/Runner/Info.plist`: add the
+  `NSPhotoLibraryUsageDescription` key with a string like
+  `"MEMOIR_LOG keeps one photo per day inside your private diary."`
+- **Android** — no manifest change needed for `image_picker` on
+  Android 13+ (uses the system photo picker), but if you need to
+  support API 32 and below, add `READ_EXTERNAL_STORAGE` to
+  `AndroidManifest.xml`.
+
 ### VS Code launch config
 
 Copy `.vscode/launch.json.example` to `.vscode/launch.json` and fill in your values. The example is gitignored except for the `.example`.

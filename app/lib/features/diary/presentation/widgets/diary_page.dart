@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:memoir_log/app/theme/crt_theme.dart';
+import 'package:memoir_log/features/cover_photo/presentation/widgets/cover_photo_chip.dart';
 import 'package:memoir_log/features/diary/domain/entities/entry.dart';
 import 'package:memoir_log/features/diary/presentation/widgets/pixel_meter.dart';
 import 'package:memoir_log/features/diary/presentation/widgets/typewriter_text.dart';
@@ -11,10 +12,16 @@ class DiaryPage extends StatelessWidget {
 
   final Entry entry;
 
+  bool _isToday(DateTime d) {
+    final now = DateTime.now();
+    return d.year == now.year && d.month == now.month && d.day == now.day;
+  }
+
   @override
   Widget build(BuildContext context) {
     final crt = context.crt;
     final dateFmt = DateFormat('EEE  dd-MMM-yyyy').format(entry.localDate).toUpperCase();
+    final isToday = _isToday(entry.localDate);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -32,6 +39,10 @@ class DiaryPage extends StatelessWidget {
           if (entry.stats != null && entry.status == EntryStatus.ok) ...[
             const SizedBox(height: 16),
             _StatStrip(stats: entry.stats!),
+          ],
+          if (isToday) ...[
+            const SizedBox(height: 16),
+            CoverPhotoChip(localDate: entry.localDate),
           ],
         ],
       ),

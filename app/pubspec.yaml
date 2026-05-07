@@ -43,6 +43,10 @@ dependencies:
   flutter_web_auth_2: ^4.0.0
   crypto: ^3.0.5
 
+  # Cover photo capture (Phase 4.5)
+  image_picker: ^1.1.2
+  flutter_image_compress: ^2.3.0
+
   # Misc
   intl: ^0.20.2
   uuid: ^4.4.2
