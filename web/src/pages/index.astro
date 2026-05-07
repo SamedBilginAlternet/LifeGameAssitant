@@ -1,11 +1,69 @@
 ---
 import Base from '~/layouts/Base.astro';
+import BootHero from '~/components/BootHero.astro';
+import Pitch from '~/components/Pitch.astro';
+import FeatureDir from '~/components/FeatureDir.astro';
+import LiveStream from '~/components/LiveStream.astro';
+import NightlyRitual from '~/components/NightlyRitual.astro';
+import CtaStrip from '~/components/CtaStrip.astro';
+import Footer from '~/components/Footer.astro';
 ---
 <Base>
-  <main class="mx-auto max-w-3xl px-6 py-32">
-    <h1 class="font-header text-amber-bright">MEMOIR_LOG v1.0</h1>
-    <p class="mt-8 text-amber-DEFAULT">
-      &gt; landing page scaffold. Page sections land in the next commit.
-    </p>
-  </main>
+  <BootHero />
+  <Pitch />
+
+  <FeatureDir
+    name="CODE"
+    tagline="the keyboard's day, captured without you logging a thing."
+    entries={[
+      { icon: '◆', label: 'GITHUB COMMITS',     source: 'GITHUB API' },
+      { icon: '◇', label: 'PRS OPENED / MERGED', source: 'GITHUB API' },
+      { icon: '·', label: 'REPOSITORIES TOUCHED', source: 'GITHUB API' },
+    ]}
+  />
+
+  <FeatureDir
+    name="BODY"
+    tagline="captures the body's day without making you tap through eight screens."
+    entries={[
+      { icon: '▤', label: 'WORKOUTS',     source: 'AUTO + MANUAL' },
+      { icon: '▥', label: 'MEALS & MACROS', source: 'MANUAL' },
+      { icon: '▦', label: 'STEPS',        source: 'HEALTH KIT' },
+      { icon: '▧', label: 'MOTORCYCLE',   source: 'MANUAL' },
+    ]}
+  />
+
+  <FeatureDir
+    name="MIND"
+    tagline="the slow studies that don't fit in a habit tracker."
+    entries={[
+      { icon: '◉', label: 'GERMAN PRACTICE',   source: 'MANUAL + VOICE' },
+      { icon: '◎', label: 'MASTERS RESEARCH',  source: 'MANUAL' },
+      { icon: '○', label: 'BOOKS',             source: 'MANUAL' },
+    ]}
+  />
+
+  <FeatureDir
+    name="CULTURE"
+    tagline="the soundtrack and the screen — what surrounded you while the day passed."
+    entries={[
+      { icon: '♫', label: 'TOP TRACK / ALBUM', source: 'SPOTIFY API' },
+      { icon: '▶', label: 'MOVIES & SHOWS',    source: 'TMDB' },
+    ]}
+  />
+
+  <FeatureDir
+    name="MEMORY"
+    tagline="the only manual taps in the day — where the diary becomes personal."
+    entries={[
+      { icon: '☼', label: 'MOOD 1-10',           source: 'MANUAL' },
+      { icon: '◐', label: 'VOICE NOTE (60s)',     source: 'WHISPER + LLAMA' },
+      { icon: '▭', label: 'ONE PHOTO OF THE DAY', source: 'MANUAL' },
+    ]}
+  />
+
+  <LiveStream />
+  <NightlyRitual />
+  <CtaStrip />
+  <Footer />
 </Base>

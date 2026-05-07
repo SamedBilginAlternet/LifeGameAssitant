@@ -1,0 +1,34 @@
+---
+interface Entry {
+  icon: string;
+  label: string;
+  source: string;
+}
+
+interface Props {
+  name: string;          // e.g. "BODY"
+  tagline: string;       // one-line hook below the entries
+  entries: Entry[];
+}
+
+const { name, tagline, entries } = Astro.props;
+---
+<section class="px-6 py-12">
+  <div class="max-w-2xl mx-auto border border-amber-dim p-6 bg-surface/30">
+    <header class="font-header text-amber-bright text-sm tracking-widest mb-6">
+      ┌─[ DIR /{name} ]─
+    </header>
+
+    <ul class="space-y-3 font-ui text-amber-DEFAULT">
+      {entries.map((e) => (
+        <li class="grid grid-cols-[40px_1fr_140px] items-center gap-4">
+          <span class="text-amber-bright text-xl" aria-hidden="true">{e.icon}</span>
+          <span class="tracking-wide">{e.label}</span>
+          <span class="text-amber-dim text-right text-sm tracking-widest">{e.source}</span>
+        </li>
+      ))}
+    </ul>
+
+    <p class="mt-6 font-body text-amber-dim text-lg">&gt; {tagline}</p>
+  </div>
+</section>

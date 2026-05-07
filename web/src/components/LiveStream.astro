@@ -1,0 +1,103 @@
+---
+// Pre-recorded entries cycle on a 12-second loop. Hand-written to
+// showcase variety: one coding day, one gym day, one quiet day.
+const entries = [
+  {
+    date: 'TUE  21-OCT-2025',
+    skill: 'LOGIC',
+    body: 'The day stayed close to the keyboard. Twelve commits across two repos, one pull request merged before noon. Lunch was protein-heavy chicken with rice; the afternoon closed with The Hitchhiker\'s Guide on the second monitor while build pipelines green-lit. A voice memo at dusk, briefly, in German.',
+  },
+  {
+    date: 'SAT  25-OCT-2025',
+    skill: 'VITALITY',
+    body: 'A long lift after breakfast — six sets of squats, four of bench, the kind of session that quiets the rest of the day. The CF Moto 250NK ran 38 km along the coast in the afternoon. Evening fell into Blade Runner 2049 and a single steak. Mood holding. The day kept its weight.',
+  },
+  {
+    date: 'SUN  26-OCT-2025',
+    skill: 'CULTURE',
+    body: 'A quiet Sunday. No code. Forty minutes of German on the couch — an episode of Easy German with the corrections caught afterward. Radiohead in the background through most of the afternoon, In Rainbows on repeat. One photo of the day, kept for the diary.',
+  },
+];
+---
+<section class="px-6 py-24">
+  <div class="max-w-md mx-auto">
+    <h2 class="text-center font-header text-amber-bright text-xs tracking-widest mb-6">
+      LIVE TRANSMISSION
+    </h2>
+
+    <div
+      id="live-stream"
+      class="border border-amber-dim p-6 bg-surface/40 min-h-[280px] relative overflow-hidden"
+    >
+      {entries.map((e, i) => (
+        <article
+          class="entry"
+          data-index={i}
+          data-target={e.body}
+          aria-hidden={i === 0 ? 'false' : 'true'}
+        >
+          <header class="flex items-center justify-between font-header text-xs text-amber-bright">
+            <span>[ {e.date} ]</span>
+            <span class="text-amber-dim">▌ {e.skill}</span>
+          </header>
+          <p class="mt-4 font-body text-amber-DEFAULT text-lg leading-snug min-h-[140px]" data-text></p>
+        </article>
+      ))}
+    </div>
+
+    <p class="mt-3 text-center font-ui text-amber-dim text-xs">
+      ▌ replayed entries · 12s loop
+    </p>
+  </div>
+</section>
+
+<script>
+  // Vanilla typewriter that cycles through the rendered .entry blocks.
+  // Each one types in (~6s), holds (~3s), then yields to the next.
+  const root = document.getElementById('live-stream');
+  if (root) {
+    const entries = Array.from(root.querySelectorAll<HTMLElement>('.entry'));
+    let active = 0;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function show(i: number) {
+      entries.forEach((el, idx) => {
+        el.style.display = idx === i ? 'block' : 'none';
+        el.setAttribute('aria-hidden', idx === i ? 'false' : 'true');
+      });
+    }
+
+    function typeCurrent() {
+      const el = entries[active];
+      const target = el.dataset.target ?? '';
+      const out = el.querySelector<HTMLElement>('[data-text]');
+      if (!out) return;
+      if (reduced) {
+        out.textContent = '> ' + target;
+        setTimeout(advance, 4000);
+        return;
+      }
+      out.textContent = '> ';
+      let i = 0;
+      const charMs = Math.max(20, Math.min(60, 6000 / target.length));
+      const tick = () => {
+        if (i >= target.length) {
+          setTimeout(advance, 3000);
+          return;
+        }
+        out.textContent += target[i++];
+        setTimeout(tick, charMs);
+      };
+      tick();
+    }
+
+    function advance() {
+      active = (active + 1) % entries.length;
+      show(active);
+      typeCurrent();
+    }
+
+    show(0);
+    typeCurrent();
+  }
+</script>

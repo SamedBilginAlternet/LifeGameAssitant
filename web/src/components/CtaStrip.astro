@@ -1,0 +1,68 @@
+---
+---
+<section id="cta" class="px-6 py-24">
+  <div class="max-w-xl mx-auto text-center">
+    <h2 class="font-header text-amber-bright text-sm tracking-widest mb-8">
+      [ INITIALIZE_SYSTEM ]
+    </h2>
+
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a
+        href="#"
+        class="inline-flex items-center justify-center px-6 py-3 border border-amber-bright
+               text-amber-bright font-ui tracking-widest hover:bg-amber-DEFAULT/10"
+        aria-label="Download on the App Store (coming soon)"
+      >
+        ▼ APP STORE
+      </a>
+      <a
+        href="#"
+        class="inline-flex items-center justify-center px-6 py-3 border border-amber-bright
+               text-amber-bright font-ui tracking-widest hover:bg-amber-DEFAULT/10"
+        aria-label="Get it on Google Play (coming soon)"
+      >
+        ▼ PLAY STORE
+      </a>
+    </div>
+
+    <form class="mt-10 flex flex-col sm:flex-row gap-2 justify-center" data-beta-form>
+      <label for="email" class="sr-only">Email for TestFlight beta</label>
+      <input
+        id="email"
+        type="email"
+        name="email"
+        required
+        placeholder="email@for.testflight"
+        class="bg-transparent border-b border-amber-dim text-amber-DEFAULT
+               font-body text-lg px-2 py-2 focus:outline-none focus:border-amber-bright
+               placeholder:text-amber-dim"
+      />
+      <button
+        type="submit"
+        class="px-6 py-2 border border-amber-dim text-amber-DEFAULT font-ui tracking-widest
+               hover:border-amber-bright hover:text-amber-bright"
+      >
+        [ JOIN BETA ]
+      </button>
+    </form>
+
+    <p class="mt-3 font-ui text-amber-dim text-xs">
+      no analytics, no list-renting. one email when TestFlight opens.
+    </p>
+  </div>
+</section>
+
+<script>
+  // Inert until a backing endpoint exists. For now we capture-and-thank
+  // so visitors get feedback; replace the handler when the list lives
+  // somewhere real.
+  const form = document.querySelector<HTMLFormElement>('[data-beta-form]');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const button = form.querySelector('button')!;
+      button.textContent = '[ NOTED. ]';
+      button.disabled = true;
+    });
+  }
+</script>

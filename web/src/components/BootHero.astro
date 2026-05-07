@@ -1,0 +1,115 @@
+---
+// Full-viewport hero. The boot animation lives in BootCanvas (island);
+// everything else is static HTML so first paint reads even with JS off.
+---
+<section class="relative min-h-[100svh] flex items-center justify-center overflow-hidden">
+  <canvas
+    id="boot-canvas"
+    class="absolute inset-0 w-full h-full"
+    aria-hidden="true"
+  ></canvas>
+
+  <div class="relative z-10 max-w-2xl mx-auto px-6 text-center">
+    <noscript>
+      <pre class="font-ui text-amber-DEFAULT text-left text-sm whitespace-pre">
+MEMOIR_LOG v1.0 BOOT
+
+&gt; CHECKING STORAGE........... OK
+&gt; CONNECTING TO SUPABASE..... OK
+&gt; SYNCING ENTRIES (1247)..... OK
+&gt; NARRATOR LINK.............. ONLINE
+&gt; READY.
+      </pre>
+    </noscript>
+
+    <h1 class="mt-12 font-body text-3xl sm:text-4xl text-amber-bright">
+      THE DIARY THAT WRITES ITSELF.
+    </h1>
+
+    <a
+      href="#cta"
+      class="inline-block mt-10 px-8 py-3 border border-amber-bright text-amber-bright
+             font-ui text-lg tracking-widest animate-pulse-glow"
+    >
+      [ INITIALIZE_SYSTEM ]
+    </a>
+    <p class="mt-6 font-ui text-amber-dim">scroll for transmission ▼</p>
+  </div>
+</section>
+
+<script>
+  // Boot sequence canvas. ~80 lines of plain JS — no engine, no
+  // framework. Lazy-loaded as a module so it doesn't block first paint.
+  // Honors prefers-reduced-motion: if reduced, we draw the final frame
+  // immediately instead of typing.
+  const canvas = document.getElementById('boot-canvas') as HTMLCanvasElement | null;
+  if (canvas) {
+    const ctx = canvas.getContext('2d')!;
+    const lines = [
+      '> CHECKING STORAGE........... OK',
+      '> CONNECTING TO SUPABASE..... OK',
+      '> SYNCING ENTRIES (1247)..... OK',
+      '> NARRATOR LINK.............. ONLINE',
+      '> READY.',
+    ];
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function fit() {
+      const dpr = devicePixelRatio || 1;
+      const r = canvas.getBoundingClientRect();
+      canvas.width = r.width * dpr;
+      canvas.height = r.height * dpr;
+      ctx.scale(dpr, dpr);
+    }
+    fit();
+    addEventListener('resize', fit, { passive: true });
+
+    const start = performance.now();
+    let revealed = 0; // characters typed so far across all lines
+    const totalChars = lines.reduce((n, l) => n + l.length + 1, 0);
+    const PERIOD_MS = reduced ? 0 : 2400;
+
+    function frame(now: number) {
+      const elapsed = now - start;
+      revealed = reduced ? totalChars : Math.min(totalChars, Math.floor((elapsed / PERIOD_MS) * totalChars));
+
+      const r = canvas.getBoundingClientRect();
+      ctx.clearRect(0, 0, r.width, r.height);
+      ctx.font = '14px "Share Tech Mono", monospace';
+      ctx.fillStyle = 'rgba(255, 178, 0, 0.95)';
+      ctx.shadowColor = 'rgba(255, 178, 0, 0.5)';
+      ctx.shadowBlur = 4;
+
+      const x = Math.max(24, r.width / 2 - 220);
+      const y0 = Math.max(48, r.height / 2 - 140);
+      let charBudget = revealed;
+      lines.forEach((line, i) => {
+        const slice = Math.min(line.length, charBudget);
+        if (slice > 0) {
+          ctx.fillText(line.slice(0, slice), x, y0 + i * 22);
+        }
+        charBudget -= line.length + 1;
+      });
+
+      // Blinking cursor on the active line.
+      const blink = Math.floor(now / 500) % 2 === 0;
+      if (!reduced && blink && revealed < totalChars) {
+        let used = 0;
+        let lineIdx = 0;
+        for (let i = 0; i < lines.length; i++) {
+          if (used + lines[i].length + 1 > revealed) {
+            lineIdx = i;
+            break;
+          }
+          used += lines[i].length + 1;
+        }
+        const offset = revealed - used;
+        const w = ctx.measureText(lines[lineIdx].slice(0, offset)).width;
+        ctx.fillRect(x + w + 2, y0 + lineIdx * 22 - 12, 8, 14);
+      }
+
+      if (revealed < totalChars) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+</script>
