@@ -43,6 +43,7 @@ Read in order — each one assumes the previous.
 5. [docs/DESIGN.md](docs/DESIGN.md) — CRT Chronicle aesthetic, monochrome terminal, typewriter + 8-bit click track.
 6. [docs/ROADMAP.md](docs/ROADMAP.md) — phased delivery from manual MVP to voice-driven German practice.
 7. [docs/LANDING_PAGE.md](docs/LANDING_PAGE.md) — the Digital Time Capsule: marketing site with boot-sequence hero.
+8. [docs/CODE_STANDARDS.md](docs/CODE_STANDARDS.md) — Clean Architecture, SOLID, Riverpod DI, `fpdart` Either, `ThemeExtension`, when *not* to layer.
 
 ## North star
 

@@ -18,6 +18,7 @@ Every dependency is justified. No library lands here just because it's popular �
 | `hive_flutter`                   | Local cache + offline write queue.             |
 | `flutter_secure_storage`         | Stores Supabase refresh token.                 |
 | `freezed` + `json_serializable`  | Immutable models with codegen JSON.            |
+| `fpdart`                         | `Either<Failure, T>` at every repo boundary. Newer + better-maintained than `dartz`. |
 
 ### Capture (the new stuff)
 | Package                          | Why                                            |
@@ -55,6 +56,8 @@ Every dependency is justified. No library lands here just because it's popular �
 
 ### Deliberately rejected
 - **Bloc / GetX** — overkill / anti-pattern soup for a single-user app.
+- **GetIt** — Riverpod's `Provider` is already a fully capable DI container. Two DI containers in one app is itself an anti-pattern. See `docs/CODE_STANDARDS.md`.
+- **dartz** — superseded by `fpdart`. Same idea, less active maintenance.
 - **Firebase** — Supabase covers everything; one backend is the rule.
 - **Google Photos API** — requires OAuth + ongoing token refresh; `photo_manager` reads the local library directly. Trade-off accepted: doesn't see iCloud-only or Google-cloud-only photos.
 - **Letterboxd / Trakt SDKs** — TMDB free API + a tiny picker is enough.
@@ -103,18 +106,21 @@ Every dependency is justified. No library lands here just because it's popular �
 LifeGameAssitant/
 ├── README.md
 ├── docs/                       # this folder
-├── app/                        # Flutter app
+├── app/                        # Flutter app — feature-first, three-layer per feature
 │   ├── lib/
 │   │   ├── main.dart
-│   │   ├── app/                # router, theme, bootstrap
-│   │   ├── core/               # supabase client, env, errors
-│   │   ├── data/               # repositories, dtos
-│   │   ├── domain/             # entities (Entry, Workout, Movie, VoiceNote)
+│   │   ├── app/                # router, CrtTheme extension, bootstrap, Riverpod root
+│   │   ├── core/               # supabase client, env, shared Failure base, fpdart helpers
 │   │   └── features/
-│   │       ├── diary/          # the home — timeline + DiaryPage
-│   │       ├── capture/        # quick-add sheet, movie picker, voice memo
-│   │       ├── workouts/       # set/rep entry
-│   │       ├── skills/         # side-route gamification
+│   │       ├── diary/
+│   │       │   ├── data/        # datasources, dtos, mappers, repositoryImpl
+│   │       │   ├── domain/      # entity, abstract repo, use cases, failures
+│   │       │   └── presentation/# providers, screens, widgets
+│   │       ├── capture/         # voice memo + quick-add chips
+│   │       ├── workouts/
+│   │       ├── meals/
+│   │       ├── music/
+│   │       ├── skills/          # STATUS tab — skill tree + integrations health
 │   │       └── settings/
 │   └── pubspec.yaml
 ├── supabase/
