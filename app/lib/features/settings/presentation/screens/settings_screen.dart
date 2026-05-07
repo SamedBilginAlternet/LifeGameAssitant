@@ -7,6 +7,7 @@ import 'package:memoir_log/app/theme/scanline_overlay.dart';
 import 'package:memoir_log/app/theme/theme_provider.dart';
 import 'package:memoir_log/core/audio_service.dart';
 import 'package:memoir_log/core/supabase_providers.dart';
+import 'package:memoir_log/features/integrations/presentation/providers/integrations_providers.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -57,6 +58,9 @@ class SettingsScreen extends ConsumerWidget {
                   ref.read(scanlinesEnabledProvider.notifier).state = v;
                 },
               ),
+              const SizedBox(height: 32),
+              _SectionHeader('INTEGRATIONS'),
+              _GithubRow(),
               const SizedBox(height: 32),
               _SectionHeader('AUDIO'),
               _ToggleRow(
@@ -133,6 +137,48 @@ class _ToggleRow extends StatelessWidget {
             Text(
               value ? '[ON ]' : '[OFF]',
               style: crt.uiType.copyWith(color: value ? crt.fgBright : crt.fgDim),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _GithubRow extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final crt = context.crt;
+    final integration = ref.watch(githubIntegrationProvider);
+    return InkWell(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        context.push('/integrations/github');
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            Text('GITHUB', style: crt.uiType.copyWith(color: crt.fgBright)),
+            const Spacer(),
+            integration.when(
+              loading: () => Text('...', style: crt.uiType.copyWith(color: crt.fgDim)),
+              error: (_, __) => Text(
+                '[ERROR]',
+                style: crt.uiType.copyWith(color: crt.fgDim),
+              ),
+              data: (either) => either.match(
+                (failure) => Text(
+                  '[ERROR]',
+                  style: crt.uiType.copyWith(color: crt.fgDim),
+                ),
+                (g) => Text(
+                  g.connected ? '[@${g.login}]' : '[CONNECT]',
+                  style: crt.uiType.copyWith(
+                    color: g.connected ? crt.fgBright : crt.fgDim,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
