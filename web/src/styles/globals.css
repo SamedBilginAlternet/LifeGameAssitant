@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import '@fontsource/vt323/400.css';
+@import '@fontsource/share-tech-mono/400.css';
+@import '@fontsource/press-start-2p/400.css';
+
+:root {
+  color-scheme: dark;
+}
+
+html, body {
+  background-color: theme('colors.canvas');
+  color: theme('colors.amber.DEFAULT');
+  font-family: theme('fontFamily.body');
+  font-size: 20px;
+  line-height: 1.45;
+}
+
+body {
+  /* Faint phosphor halo around every glyph — what makes the CRT
+     aesthetic read as a CRT rather than just a monospaced page. */
+  text-shadow: 0 0 1px rgba(255, 178, 0, 0.35);
+}
+
+/* Scanline overlay — a 1px every 3px gradient. ~12% alpha keeps it
+   from fighting the body text. */
+.crt-scanlines {
+  background-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2px,
+    rgba(255, 178, 0, 0.08) 2px,
+    rgba(255, 178, 0, 0.08) 3px
+  );
+  background-size: 100% 3px;
+  pointer-events: none;
+}
+
+/* Reduced-motion fallback — no glow pulses, no canvas typewriter
+   reveal. Static text, but the aesthetic still holds together. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse-glow,
+  .animate-scanline-drift {
+    animation: none !important;
+  }
+}

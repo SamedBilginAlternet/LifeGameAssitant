@@ -1,0 +1,32 @@
+---
+import '~/styles/globals.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'MEMOIR_LOG · the diary that writes itself',
+  description = 'An automated memoir. Your commits, your gym sets, the album on repeat — every fragment of your day lands in one place. At 23:50, a quiet narrator stitches it into a hand-written diary entry.',
+} = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0A0606" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>{title}</title>
+  </head>
+  <body class="relative">
+    <slot />
+    <div class="fixed inset-0 crt-scanlines z-50 animate-scanline-drift" aria-hidden="true"></div>
+  </body>
+</html>
