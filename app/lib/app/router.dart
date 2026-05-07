@@ -4,6 +4,7 @@ import 'package:memoir_log/core/supabase_providers.dart';
 import 'package:memoir_log/features/auth/presentation/screens/login_screen.dart';
 import 'package:memoir_log/features/capture/presentation/screens/capture_screen.dart';
 import 'package:memoir_log/features/diary/presentation/screens/timeline_screen.dart';
+import 'package:memoir_log/features/settings/presentation/screens/settings_screen.dart';
 
 /// Top-level router. Auth state drives redirects — when the user signs
 /// in or out, the redirect callback runs and the router lands on the
@@ -34,6 +35,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/capture',
         builder: (context, state) => const CaptureScreen(),
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const SettingsScreen(),
       ),
     ],
   );

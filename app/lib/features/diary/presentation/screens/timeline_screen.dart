@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:go_router/go_router.dart';
 import 'package:memoir_log/app/theme/crt_theme.dart';
-import 'package:memoir_log/core/supabase_providers.dart';
 import 'package:memoir_log/features/diary/domain/entities/entry.dart';
 import 'package:memoir_log/features/diary/presentation/providers/diary_providers.dart';
 import 'package:memoir_log/features/diary/presentation/widgets/diary_page.dart';
@@ -73,12 +72,12 @@ class _AppBar extends ConsumerWidget {
             icon: Text('[+]', style: crt.uiType.copyWith(color: crt.fgBright)),
           ),
           IconButton(
-            tooltip: 'Sign out',
-            onPressed: () async {
+            tooltip: 'Settings',
+            onPressed: () {
               HapticFeedback.selectionClick();
-              await ref.read(supabaseClientProvider).auth.signOut();
+              context.push('/settings');
             },
-            icon: Text('[X]', style: crt.uiType.copyWith(color: crt.fgDim)),
+            icon: Text('[=]', style: crt.uiType.copyWith(color: crt.fgDim)),
           ),
         ],
       ),
