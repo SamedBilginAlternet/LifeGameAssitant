@@ -31,6 +31,12 @@ export interface DayAggregate {
   meals?: Array<{ type: string; title: string; protein_g?: number | null }>;
   movies_watched?: Array<{ title: string; year?: number | null; rating?: number | null; medium?: string | null }>;
   motorcycle_rides?: Array<{ distance_km: number; route_tag?: string | null }>;
+  music?: {
+    top_track?: { title: string; artist: string; play_count: number };
+    top_artist?: { name: string; play_count: number };
+    total_minutes: number;
+  };
+  cover_photo?: { present: boolean; dominant_hex?: string | null };
   learning_logs?: Array<{ track: string; minutes: number; topic?: string | null }>;
   mood_score?: number;
   note?: string | null;
@@ -43,7 +49,7 @@ export async function aggregateDay(
   userId: string,
   date: string,
 ): Promise<DayAggregate> {
-  const [daily, fitness, learning, github, workouts, meals, movies, rides] = await Promise.all([
+  const [daily, fitness, learning, github, workouts, meals, movies, rides, music, cover] = await Promise.all([
     supabase
       .from('daily_logs')
       .select('mood_score, note')
@@ -85,6 +91,18 @@ export async function aggregateDay(
       .select('distance_km, route_tag')
       .eq('user_id', userId)
       .eq('local_date', date),
+    supabase
+      .from('music_listens')
+      .select('track_title, artist, duration_sec')
+      .eq('user_id', userId)
+      .eq('local_date', date),
+    supabase
+      .from('media_assets')
+      .select('dominant_hex')
+      .eq('user_id', userId)
+      .eq('local_date', date)
+      .eq('kind', 'cover')
+      .maybeSingle(),
   ]);
 
   const fitness_data: Record<string, number> = {};
@@ -108,6 +126,33 @@ export async function aggregateDay(
     github_events = { commits, prs_opened, prs_merged, repos: [...repoSet] };
   }
 
+  const musicRows = (music.data ?? []) as Array<{ track_title: string; artist: string; duration_sec: number }>;
+  let musicSummary: DayAggregate['music'];
+  if (musicRows.length > 0) {
+    const trackCounts = new Map<string, { title: string; artist: string; count: number }>();
+    const artistCounts = new Map<string, number>();
+    let totalSec = 0;
+    for (const r of musicRows) {
+      const tk = `${r.artist}::${r.track_title}`;
+      const cur = trackCounts.get(tk);
+      trackCounts.set(tk, { title: r.track_title, artist: r.artist, count: (cur?.count ?? 0) + 1 });
+      artistCounts.set(r.artist, (artistCounts.get(r.artist) ?? 0) + 1);
+      totalSec += r.duration_sec ?? 0;
+    }
+    const topTrack = [...trackCounts.values()].sort((a, b) => b.count - a.count)[0];
+    const topArtistEntry = [...artistCounts.entries()].sort((a, b) => b[1] - a[1])[0];
+    musicSummary = {
+      total_minutes: Math.round(totalSec / 60),
+      top_track: topTrack ? { title: topTrack.title, artist: topTrack.artist, play_count: topTrack.count } : undefined,
+      top_artist: topArtistEntry ? { name: topArtistEntry[0], play_count: topArtistEntry[1] } : undefined,
+    };
+  }
+
+  const coverRow = cover.data as { dominant_hex: string | null } | null;
+  const coverSummary = coverRow != null
+      ? { present: true, dominant_hex: coverRow.dominant_hex }
+      : undefined;
+
   const mealRows = (meals.data ?? []) as Array<{ meal_type: string; title: string; protein_g: number | null }>;
   const movieRows = (movies.data ?? []) as Array<{ title: string; release_year: number | null; rating: number | null; medium: string | null }>;
   const out: DayAggregate = {
@@ -123,6 +168,8 @@ export async function aggregateDay(
       medium: mv.medium,
     })),
     motorcycle_rides: (rides.data ?? []) as DayAggregate['motorcycle_rides'],
+    music: musicSummary,
+    cover_photo: coverSummary,
     learning_logs: (learning.data ?? []) as DayAggregate['learning_logs'],
     mood_score: daily.data?.mood_score ?? undefined,
     note: daily.data?.note ?? null,
