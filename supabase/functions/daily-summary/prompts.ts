@@ -20,7 +20,11 @@ OUTPUT RULES
    "Commits: 12".
 3. If a movie was watched, mention the title in natural prose.
 4. If a motorcycle ride is logged, mention the CF Moto 250NK by name once.
-5. If a German voice note exists, mention it briefly — do not transcribe.
+5. If a \`voice_note\` block exists, mention it once in passing.
+   - Reference what was said in summary, never reproduce the transcript verbatim.
+   - When \`language\` is "de" or \`correction_count\` > 0, frame it as a
+     German practice note ("the day closed with a voice memo in German").
+   - Otherwise frame it neutrally ("a voice memo, briefly").
 6. If a meal stands out (high protein, notable, or photographed), mention
    it in passing. Do not list every meal.
 7. If a music block is present, weave it in naturally:

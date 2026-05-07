@@ -37,6 +37,12 @@ export interface DayAggregate {
     total_minutes: number;
   };
   cover_photo?: { present: boolean; dominant_hex?: string | null };
+  voice_note?: {
+    duration_sec: number;
+    language: string | null;
+    transcript: string | null;
+    correction_count: number;
+  };
   learning_logs?: Array<{ track: string; minutes: number; topic?: string | null }>;
   mood_score?: number;
   note?: string | null;
@@ -49,7 +55,7 @@ export async function aggregateDay(
   userId: string,
   date: string,
 ): Promise<DayAggregate> {
-  const [daily, fitness, learning, github, workouts, meals, movies, rides, music, cover] = await Promise.all([
+  const [daily, fitness, learning, github, workouts, meals, movies, rides, music, cover, voice] = await Promise.all([
     supabase
       .from('daily_logs')
       .select('mood_score, note')
@@ -103,6 +109,13 @@ export async function aggregateDay(
       .eq('local_date', date)
       .eq('kind', 'cover')
       .maybeSingle(),
+    supabase
+      .from('voice_notes')
+      .select('duration_sec, language, transcript_de, transcript_en, corrections, status')
+      .eq('user_id', userId)
+      .eq('local_date', date)
+      .eq('status', 'ok')
+      .maybeSingle(),
   ]);
 
   const fitness_data: Record<string, number> = {};
@@ -153,6 +166,26 @@ export async function aggregateDay(
       ? { present: true, dominant_hex: coverRow.dominant_hex }
       : undefined;
 
+  const voiceRow = voice.data as {
+    duration_sec: number;
+    language: string | null;
+    transcript_de: string | null;
+    transcript_en: string | null;
+    corrections: unknown;
+    status: string;
+  } | null;
+  // Prefer the English translation for the narrator — it's the
+  // canonical surface; the original transcript is only useful when the
+  // Llama pass failed to produce a translation.
+  const voiceSummary = voiceRow != null
+      ? {
+          duration_sec: voiceRow.duration_sec,
+          language: voiceRow.language,
+          transcript: voiceRow.transcript_en ?? voiceRow.transcript_de,
+          correction_count: Array.isArray(voiceRow.corrections) ? voiceRow.corrections.length : 0,
+        }
+      : undefined;
+
   const mealRows = (meals.data ?? []) as Array<{ meal_type: string; title: string; protein_g: number | null }>;
   const movieRows = (movies.data ?? []) as Array<{ title: string; release_year: number | null; rating: number | null; medium: string | null }>;
   const out: DayAggregate = {
@@ -170,6 +203,7 @@ export async function aggregateDay(
     motorcycle_rides: (rides.data ?? []) as DayAggregate['motorcycle_rides'],
     music: musicSummary,
     cover_photo: coverSummary,
+    voice_note: voiceSummary,
     learning_logs: (learning.data ?? []) as DayAggregate['learning_logs'],
     mood_score: daily.data?.mood_score ?? undefined,
     note: daily.data?.note ?? null,
