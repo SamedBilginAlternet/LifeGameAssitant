@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:memoir_log/app/theme/crt_theme.dart';
 import 'package:memoir_log/features/cover_photo/presentation/widgets/cover_photo_chip.dart';
 import 'package:memoir_log/features/cover_photo/presentation/widgets/cover_photo_view.dart';
+import 'package:memoir_log/features/voice_notes/presentation/widgets/voice_note_card.dart';
+import 'package:memoir_log/features/voice_notes/presentation/widgets/voice_note_chip.dart';
 import 'package:memoir_log/features/diary/domain/entities/entry.dart';
 import 'package:memoir_log/features/diary/presentation/widgets/pixel_meter.dart';
 import 'package:memoir_log/features/diary/presentation/widgets/typewriter_text.dart';
@@ -43,7 +45,11 @@ class DiaryPage extends StatelessWidget {
           ],
           const SizedBox(height: 8),
           CoverPhotoView(localDate: entry.localDate),
-          if (isToday) CoverPhotoChip(localDate: entry.localDate),
+          VoiceNoteCard(localDate: entry.localDate),
+          if (isToday) ...[
+            CoverPhotoChip(localDate: entry.localDate),
+            VoiceNoteChip(localDate: entry.localDate),
+          ],
         ],
       ),
     );

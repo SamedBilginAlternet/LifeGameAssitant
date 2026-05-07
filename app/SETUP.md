@@ -69,6 +69,16 @@ to the generated native files:
   support API 32 and below, add `READ_EXTERNAL_STORAGE` to
   `AndroidManifest.xml`.
 
+### Microphone permission (Phase 5 voice notes)
+
+The `record` package needs explicit permission strings:
+
+- **iOS** — `app/ios/Runner/Info.plist`: add
+  `NSMicrophoneUsageDescription` with a string like
+  `"MEMOIR_LOG records short voice notes you keep in your diary."`
+- **Android** — `app/android/app/src/main/AndroidManifest.xml`: add
+  `<uses-permission android:name="android.permission.RECORD_AUDIO"/>`.
+
 ### VS Code launch config
 
 Copy `.vscode/launch.json.example` to `.vscode/launch.json` and fill in your values. The example is gitignored except for the `.example`.
