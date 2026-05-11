@@ -31,7 +31,10 @@ class SkillTreeScreen extends ConsumerWidget {
                       HapticFeedback.selectionClick();
                       context.pop();
                     },
-                    icon: Text('[<]', style: crt.uiType.copyWith(color: crt.fgBright)),
+                    icon: Text(
+                      '[<]',
+                      style: crt.uiType.copyWith(color: crt.fgBright),
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Text('STATUS', style: crt.dateHeaderType),
@@ -117,7 +120,9 @@ class _Body extends StatelessWidget {
                   child: Text(
                     _labelFor(s.skill),
                     style: crt.uiType.copyWith(
-                      color: s.skill == snapshot.dominant ? crt.fgBright : crt.fgDim,
+                      color: s.skill == snapshot.dominant
+                          ? crt.fgBright
+                          : crt.fgDim,
                     ),
                   ),
                 ),

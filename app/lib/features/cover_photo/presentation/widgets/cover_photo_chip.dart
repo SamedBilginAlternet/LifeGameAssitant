@@ -44,7 +44,9 @@ class _CoverPhotoChipState extends ConsumerState<CoverPhotoChip> {
           HapticFeedback.heavyImpact();
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('photo upload failed: ${failure.message}')),
+              SnackBar(
+                content: Text('photo upload failed: ${failure.message}'),
+              ),
             );
           }
         },
@@ -71,8 +73,8 @@ class _CoverPhotoChipState extends ConsumerState<CoverPhotoChip> {
     final label = _busy
         ? '[ UPLOADING... ]'
         : hasCover
-            ? '[+ REPLACE PHOTO ]'
-            : '[+ PHOTO ]';
+        ? '[+ REPLACE PHOTO ]'
+        : '[+ PHOTO ]';
     final color = _busy ? crt.fgDim : crt.fgBright;
 
     return InkWell(

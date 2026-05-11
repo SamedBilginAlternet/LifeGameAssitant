@@ -11,7 +11,8 @@ class ConnectSpotifyScreen extends ConsumerStatefulWidget {
   const ConnectSpotifyScreen({super.key});
 
   @override
-  ConsumerState<ConnectSpotifyScreen> createState() => _ConnectSpotifyScreenState();
+  ConsumerState<ConnectSpotifyScreen> createState() =>
+      _ConnectSpotifyScreenState();
 }
 
 class _ConnectSpotifyScreenState extends ConsumerState<ConnectSpotifyScreen> {
@@ -71,7 +72,10 @@ class _ConnectSpotifyScreenState extends ConsumerState<ConnectSpotifyScreen> {
                 children: [
                   IconButton(
                     onPressed: _busy ? null : () => context.pop(),
-                    icon: Text('[<]', style: crt.uiType.copyWith(color: crt.fgBright)),
+                    icon: Text(
+                      '[<]',
+                      style: crt.uiType.copyWith(color: crt.fgBright),
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Text('CONNECT SPOTIFY', style: crt.dateHeaderType),
@@ -88,7 +92,10 @@ class _ConnectSpotifyScreenState extends ConsumerState<ConnectSpotifyScreen> {
               if (_statusLine != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12),
-                  child: Text(_statusLine!, style: crt.bodyType.copyWith(color: crt.fgDim)),
+                  child: Text(
+                    _statusLine!,
+                    style: crt.bodyType.copyWith(color: crt.fgDim),
+                  ),
                 ),
               TerminalButton(
                 label: _busy ? '[ AWAITING GRANT... ]' : '[ CONNECT ]',

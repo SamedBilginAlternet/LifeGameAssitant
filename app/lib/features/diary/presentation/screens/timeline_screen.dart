@@ -33,7 +33,10 @@ class TimelineScreen extends ConsumerWidget {
                 error: (e, _) => _ErrorBlock(message: e.toString()),
                 data: (either) => either.fold(
                   (failure) => _ErrorBlock(message: failure.message),
-                  (list) => _EntriesList(entries: list, onRefresh: () => _refresh(ref)),
+                  (list) => _EntriesList(
+                    entries: list,
+                    onRefresh: () => _refresh(ref),
+                  ),
                 ),
               ),
             ),
@@ -46,10 +49,7 @@ class TimelineScreen extends ConsumerWidget {
   Future<void> _refresh(WidgetRef ref) async {
     HapticFeedback.lightImpact();
     final result = await ref.read(resummarizeTodayProvider).call();
-    result.match(
-      (_) => null,
-      (_) => null,
-    );
+    result.match((_) => null, (_) => null);
   }
 }
 
@@ -111,7 +111,10 @@ class _EntriesList extends StatelessWidget {
           children: [
             const SizedBox(height: 120),
             Center(
-              child: Text('> NO ENTRIES YET. LIVE A DAY._', style: crt.bodyType),
+              child: Text(
+                '> NO ENTRIES YET. LIVE A DAY._',
+                style: crt.bodyType,
+              ),
             ),
           ],
         ),
@@ -148,4 +151,3 @@ class _ErrorBlock extends StatelessWidget {
     );
   }
 }
-

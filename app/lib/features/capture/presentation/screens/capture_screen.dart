@@ -50,16 +50,22 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
 
     final proteinValue = num.tryParse(_proteinCtl.text.trim());
     if (proteinValue != null && proteinValue > 0) {
-      results.add(await repo.saveFitnessMetric(metric: 'protein_g', value: proteinValue));
+      results.add(
+        await repo.saveFitnessMetric(metric: 'protein_g', value: proteinValue),
+      );
     }
 
     final germanMinutes = int.tryParse(_germanMinCtl.text.trim());
     if (germanMinutes != null && germanMinutes > 0) {
-      results.add(await repo.logLearning(
-        track: 'german',
-        minutes: germanMinutes,
-        topic: _germanTopicCtl.text.trim().isEmpty ? null : _germanTopicCtl.text.trim(),
-      ));
+      results.add(
+        await repo.logLearning(
+          track: 'german',
+          minutes: germanMinutes,
+          topic: _germanTopicCtl.text.trim().isEmpty
+              ? null
+              : _germanTopicCtl.text.trim(),
+        ),
+      );
     }
 
     final note = _noteCtl.text.trim();
@@ -115,7 +121,10 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                             HapticFeedback.selectionClick();
                             context.pop();
                           },
-                    icon: Text('[<]', style: crt.uiType.copyWith(color: crt.fgBright)),
+                    icon: Text(
+                      '[<]',
+                      style: crt.uiType.copyWith(color: crt.fgBright),
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Text('CAPTURE', style: crt.dateHeaderType),
@@ -134,7 +143,9 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                       controller: _proteinCtl,
                       label: 'PROTEIN (g)',
                       hint: '0',
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                     ),
                     const SizedBox(height: 24),
                     TerminalField(
@@ -162,7 +173,10 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               if (_statusLine != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12),
-                  child: Text(_statusLine!, style: crt.bodyType.copyWith(color: crt.fgDim)),
+                  child: Text(
+                    _statusLine!,
+                    style: crt.bodyType.copyWith(color: crt.fgDim),
+                  ),
                 ),
               TerminalButton(
                 label: _busy ? '[ SAVING... ]' : '[ SAVE ]',
@@ -187,8 +201,10 @@ class _MoodSlider extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('> MOOD  ${value.toString().padLeft(2, '0')} / 10',
-            style: crt.uiType.copyWith(color: crt.fgDim)),
+        Text(
+          '> MOOD  ${value.toString().padLeft(2, '0')} / 10',
+          style: crt.uiType.copyWith(color: crt.fgDim),
+        ),
         const SizedBox(height: 8),
         SliderTheme(
           data: SliderTheme.of(context).copyWith(

@@ -69,9 +69,7 @@ class _CardState extends ConsumerState<_Card> {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        border: Border.all(color: crt.fgGhost),
-      ),
+      decoration: BoxDecoration(border: Border.all(color: crt.fgGhost)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -80,7 +78,10 @@ class _CardState extends ConsumerState<_Card> {
               InkWell(
                 onTap: _togglePlay,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 4,
+                    horizontal: 4,
+                  ),
                   child: Text(
                     _playing ? '[ ❚❚ PAUSE ]' : '[ ▶ PLAY  ]',
                     style: crt.uiType.copyWith(color: crt.fgBright),
@@ -150,7 +151,10 @@ class _CorrectionRow extends StatelessWidget {
                     decoration: TextDecoration.lineThrough,
                   ),
                 ),
-                TextSpan(text: '  →  ', style: crt.bodyType.copyWith(color: crt.fgDim)),
+                TextSpan(
+                  text: '  →  ',
+                  style: crt.bodyType.copyWith(color: crt.fgDim),
+                ),
                 TextSpan(
                   text: item.corrected,
                   style: crt.bodyType.copyWith(color: crt.fgBright),

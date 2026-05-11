@@ -78,7 +78,10 @@ class _DitherPainter extends CustomPainter {
       // toward the active tint so it doesn't look out of place against
       // the CRT chrome.
       final paint = Paint()
-        ..colorFilter = ColorFilter.mode(tint.withValues(alpha: 0.85), BlendMode.modulate);
+        ..colorFilter = ColorFilter.mode(
+          tint.withValues(alpha: 0.85),
+          BlendMode.modulate,
+        );
       canvas.drawImageRect(
         image,
         Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
@@ -104,9 +107,7 @@ class _DitherPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _DitherPainter old) =>
-      old.program != program ||
-      old.image != image ||
-      old.tint != tint;
+      old.program != program || old.image != image || old.tint != tint;
 }
 
 /// Convenience: decode encoded image bytes into a [ui.Image].

@@ -54,7 +54,9 @@ class _TypewriterTextState extends ConsumerState<TypewriterText> {
   }
 
   void _scheduleNextChar() {
-    final perChar = Duration(milliseconds: (1000 / widget.charsPerSecond).round());
+    final perChar = Duration(
+      milliseconds: (1000 / widget.charsPerSecond).round(),
+    );
     _timer = Timer.periodic(perChar, (timer) {
       if (!mounted || _shown >= widget.text.length) {
         timer.cancel();

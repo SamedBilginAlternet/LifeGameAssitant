@@ -81,7 +81,10 @@ class _TreePainter extends CustomPainter {
         ..color = color
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2;
-      canvas.drawRect(Rect.fromCenter(center: pos, width: r * 2, height: r * 2), shell);
+      canvas.drawRect(
+        Rect.fromCenter(center: pos, width: r * 2, height: r * 2),
+        shell,
+      );
       canvas.drawRect(
         Rect.fromCenter(center: pos, width: r, height: r),
         Paint()..color = color,

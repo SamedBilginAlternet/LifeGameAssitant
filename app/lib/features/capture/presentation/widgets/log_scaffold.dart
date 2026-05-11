@@ -76,7 +76,10 @@ class _LogScaffoldState extends ConsumerState<LogScaffold> {
                 children: [
                   IconButton(
                     onPressed: _busy ? null : () => context.pop(),
-                    icon: Text('[<]', style: crt.uiType.copyWith(color: crt.fgBright)),
+                    icon: Text(
+                      '[<]',
+                      style: crt.uiType.copyWith(color: crt.fgBright),
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Text(widget.title, style: crt.dateHeaderType),
@@ -87,7 +90,10 @@ class _LogScaffoldState extends ConsumerState<LogScaffold> {
               if (_statusLine != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12),
-                  child: Text(_statusLine!, style: crt.bodyType.copyWith(color: crt.fgDim)),
+                  child: Text(
+                    _statusLine!,
+                    style: crt.bodyType.copyWith(color: crt.fgDim),
+                  ),
                 ),
               TerminalButton(
                 label: _busy ? '[ SAVING... ]' : '[ SAVE ]',

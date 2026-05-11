@@ -4,7 +4,9 @@ import 'package:memoir_log/features/capture/data/datasources/capture_remote_data
 import 'package:memoir_log/features/capture/data/repositories/capture_repository_impl.dart';
 import 'package:memoir_log/features/capture/domain/repositories/capture_repository.dart';
 
-final captureRemoteDataSourceProvider = Provider<CaptureRemoteDataSource>((ref) {
+final captureRemoteDataSourceProvider = Provider<CaptureRemoteDataSource>((
+  ref,
+) {
   return CaptureRemoteDataSource(ref.read(supabaseClientProvider));
 });
 

@@ -20,10 +20,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     setState(() => _busy = true);
     HapticFeedback.lightImpact();
     try {
-      await ref.read(supabaseClientProvider).auth.signInWithOAuth(
-            provider,
-            redirectTo: 'memoirlog://auth-callback',
-          );
+      await ref
+          .read(supabaseClientProvider)
+          .auth
+          .signInWithOAuth(provider, redirectTo: 'memoirlog://auth-callback');
     } finally {
       if (mounted) setState(() => _busy = false);
     }

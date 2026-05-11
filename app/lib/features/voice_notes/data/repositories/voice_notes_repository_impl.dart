@@ -13,9 +13,9 @@ class VoiceNotesRepositoryImpl implements VoiceNotesRepository {
     required VoiceNotesRemoteDataSource remote,
     required VoiceRecorder recorder,
     required String Function() currentUserId,
-  })  : _remote = remote,
-        _recorder = recorder,
-        _currentUserId = currentUserId;
+  }) : _remote = remote,
+       _recorder = recorder,
+       _currentUserId = currentUserId;
 
   final VoiceNotesRemoteDataSource _remote;
   final VoiceRecorder _recorder;

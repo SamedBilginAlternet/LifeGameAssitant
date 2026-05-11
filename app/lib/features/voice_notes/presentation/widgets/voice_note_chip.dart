@@ -31,9 +31,9 @@ class _VoiceNoteChipState extends ConsumerState<VoiceNoteChip> {
     result.match(
       (failure) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('mic: ${failure.message}')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('mic: ${failure.message}')));
         }
       },
       (_) {
@@ -57,9 +57,9 @@ class _VoiceNoteChipState extends ConsumerState<VoiceNoteChip> {
     result.match(
       (failure) {
         HapticFeedback.heavyImpact();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('upload: ${failure.message}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('upload: ${failure.message}')));
       },
       (_) {
         HapticFeedback.mediumImpact();
@@ -90,13 +90,13 @@ class _VoiceNoteChipState extends ConsumerState<VoiceNoteChip> {
     final label = _busy
         ? '[ UPLOADING... ]'
         : _recording
-            ? '[ ● RELEASE TO SAVE ]'
-            : '[ HOLD TO SPEAK ]';
+        ? '[ ● RELEASE TO SAVE ]'
+        : '[ HOLD TO SPEAK ]';
     final color = _busy
         ? crt.fgDim
         : _recording
-            ? crt.fgBright
-            : crt.fgBright;
+        ? crt.fgBright
+        : crt.fgBright;
 
     return GestureDetector(
       onLongPressStart: (_) => _start(),

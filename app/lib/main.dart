@@ -13,16 +13,11 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Env.assertConfigured();
 
-  await Supabase.initialize(
-    url: Env.supabaseUrl,
-    anonKey: Env.supabaseAnonKey,
-  );
+  await Supabase.initialize(url: Env.supabaseUrl, anonKey: Env.supabaseAnonKey);
 
   // The CRT is monochrome dark — lock the system chrome to match so the
   // status bar doesn't flash white on transitions.
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -50,7 +45,8 @@ class MemoirLogApp extends ConsumerWidget {
         CrtPalette.phosphor => buildPhosphorTheme(),
       },
       routerConfig: router,
-      builder: (context, child) => ScanlineOverlay(child: child ?? const SizedBox.shrink()),
+      builder: (context, child) =>
+          ScanlineOverlay(child: child ?? const SizedBox.shrink()),
     );
   }
 }

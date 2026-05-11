@@ -8,7 +8,7 @@ import 'package:record/record.dart';
 /// Capped at 60 seconds — the diary page is not a podcasting tool.
 class VoiceRecorder {
   VoiceRecorder({AudioRecorder? recorder})
-      : _recorder = recorder ?? AudioRecorder();
+    : _recorder = recorder ?? AudioRecorder();
 
   final AudioRecorder _recorder;
   String? _activePath;
@@ -17,7 +17,8 @@ class VoiceRecorder {
 
   Future<void> start() async {
     final dir = await getTemporaryDirectory();
-    final path = '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
+    final path =
+        '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
     await _recorder.start(
       const RecordConfig(
         encoder: AudioEncoder.aacLc,

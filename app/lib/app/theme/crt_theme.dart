@@ -119,7 +119,8 @@ class CrtTheme extends ThemeExtension<CrtTheme> {
       uiType: TextStyle.lerp(uiType, other.uiType, t)!,
       dateHeaderType: TextStyle.lerp(dateHeaderType, other.dateHeaderType, t)!,
       statNumberType: TextStyle.lerp(statNumberType, other.statNumberType, t)!,
-      scanlineOpacity: scanlineOpacity + (other.scanlineOpacity - scanlineOpacity) * t,
+      scanlineOpacity:
+          scanlineOpacity + (other.scanlineOpacity - scanlineOpacity) * t,
     );
   }
 }

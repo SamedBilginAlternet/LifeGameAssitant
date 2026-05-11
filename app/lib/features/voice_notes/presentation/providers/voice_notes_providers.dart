@@ -8,10 +8,11 @@ import 'package:memoir_log/features/voice_notes/data/repositories/voice_notes_re
 import 'package:memoir_log/features/voice_notes/domain/entities/voice_note.dart';
 import 'package:memoir_log/features/voice_notes/domain/repositories/voice_notes_repository.dart';
 
-final voiceNotesRemoteDataSourceProvider =
-    Provider<VoiceNotesRemoteDataSource>((ref) {
-  return VoiceNotesRemoteDataSource(ref.read(supabaseClientProvider));
-});
+final voiceNotesRemoteDataSourceProvider = Provider<VoiceNotesRemoteDataSource>(
+  (ref) {
+    return VoiceNotesRemoteDataSource(ref.read(supabaseClientProvider));
+  },
+);
 
 final voiceRecorderProvider = Provider<VoiceRecorder>((ref) {
   final recorder = VoiceRecorder();
@@ -32,8 +33,9 @@ final voiceNotesRepositoryProvider = Provider<VoiceNotesRepository>((ref) {
 });
 
 final voiceNoteForDateProvider =
-    FutureProvider.family<Either<Failure, VoiceNote?>, DateTime>(
-  (ref, date) async {
-    return ref.read(voiceNotesRepositoryProvider).noteFor(date);
-  },
-);
+    FutureProvider.family<Either<Failure, VoiceNote?>, DateTime>((
+      ref,
+      date,
+    ) async {
+      return ref.read(voiceNotesRepositoryProvider).noteFor(date);
+    });

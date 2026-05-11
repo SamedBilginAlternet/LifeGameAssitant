@@ -32,7 +32,9 @@ class CoverPhotoRemoteDataSource {
     String? dominantHex,
   }) async {
     final path = '$userId/$localDate.jpg';
-    await _client.storage.from('covers').uploadBinary(
+    await _client.storage
+        .from('covers')
+        .uploadBinary(
           path,
           bytes,
           fileOptions: const FileOptions(

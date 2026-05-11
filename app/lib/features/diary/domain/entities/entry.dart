@@ -28,7 +28,8 @@ class Entry {
   /// render the stat strip under the body. Null on empty/failed days.
   final Map<String, dynamic>? stats;
 
-  bool get isReady => status == EntryStatus.ok && body != null && body!.isNotEmpty;
+  bool get isReady =>
+      status == EntryStatus.ok && body != null && body!.isNotEmpty;
 
   @override
   bool operator ==(Object other) =>
@@ -81,10 +82,10 @@ extension TopSkillX on TopSkill {
   }
 
   String get label => switch (this) {
-        TopSkill.logic => 'LOGIC',
-        TopSkill.vitality => 'VITALITY',
-        TopSkill.linguistics => 'LINGUISTICS',
-        TopSkill.culture => 'CULTURE',
-        TopSkill.academic => 'ACADEMIC',
-      };
+    TopSkill.logic => 'LOGIC',
+    TopSkill.vitality => 'VITALITY',
+    TopSkill.linguistics => 'LINGUISTICS',
+    TopSkill.culture => 'CULTURE',
+    TopSkill.academic => 'ACADEMIC',
+  };
 }

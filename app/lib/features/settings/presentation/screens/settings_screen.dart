@@ -34,7 +34,10 @@ class SettingsScreen extends ConsumerWidget {
                       HapticFeedback.selectionClick();
                       context.pop();
                     },
-                    icon: Text('[<]', style: crt.uiType.copyWith(color: crt.fgBright)),
+                    icon: Text(
+                      '[<]',
+                      style: crt.uiType.copyWith(color: crt.fgBright),
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Text('SETTINGS', style: crt.dateHeaderType),
@@ -119,7 +122,11 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _ToggleRow extends StatelessWidget {
-  const _ToggleRow({required this.label, required this.value, required this.onChanged});
+  const _ToggleRow({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
   final String label;
   final bool value;
   final ValueChanged<bool> onChanged;
@@ -137,7 +144,9 @@ class _ToggleRow extends StatelessWidget {
             const Spacer(),
             Text(
               value ? '[ON ]' : '[OFF]',
-              style: crt.uiType.copyWith(color: value ? crt.fgBright : crt.fgDim),
+              style: crt.uiType.copyWith(
+                color: value ? crt.fgBright : crt.fgDim,
+              ),
             ),
           ],
         ),
@@ -163,11 +172,10 @@ class _SpotifyRow extends ConsumerWidget {
             Text('SPOTIFY', style: crt.uiType.copyWith(color: crt.fgBright)),
             const Spacer(),
             integration.when(
-              loading: () => Text('...', style: crt.uiType.copyWith(color: crt.fgDim)),
-              error: (_, __) => Text(
-                '[ERROR]',
-                style: crt.uiType.copyWith(color: crt.fgDim),
-              ),
+              loading: () =>
+                  Text('...', style: crt.uiType.copyWith(color: crt.fgDim)),
+              error: (_, __) =>
+                  Text('[ERROR]', style: crt.uiType.copyWith(color: crt.fgDim)),
               data: (either) => either.match(
                 (failure) => Text(
                   '[ERROR]',
@@ -205,11 +213,10 @@ class _GithubRow extends ConsumerWidget {
             Text('GITHUB', style: crt.uiType.copyWith(color: crt.fgBright)),
             const Spacer(),
             integration.when(
-              loading: () => Text('...', style: crt.uiType.copyWith(color: crt.fgDim)),
-              error: (_, __) => Text(
-                '[ERROR]',
-                style: crt.uiType.copyWith(color: crt.fgDim),
-              ),
+              loading: () =>
+                  Text('...', style: crt.uiType.copyWith(color: crt.fgDim)),
+              error: (_, __) =>
+                  Text('[ERROR]', style: crt.uiType.copyWith(color: crt.fgDim)),
               data: (either) => either.match(
                 (failure) => Text(
                   '[ERROR]',

@@ -12,16 +12,21 @@ class DiaryRepositoryImpl implements DiaryRepository {
   DiaryRepositoryImpl({
     required DiaryRemoteDataSource remote,
     required String Function() currentUserId,
-  })  : _remote = remote,
-        _currentUserId = currentUserId;
+  }) : _remote = remote,
+       _currentUserId = currentUserId;
 
   final DiaryRemoteDataSource _remote;
   final String Function() _currentUserId;
 
   @override
-  Future<Either<DiaryFailure, List<Entry>>> recentEntries({int limit = 60}) async {
+  Future<Either<DiaryFailure, List<Entry>>> recentEntries({
+    int limit = 60,
+  }) async {
     try {
-      final dtos = await _remote.recentEntries(userId: _currentUserId(), limit: limit);
+      final dtos = await _remote.recentEntries(
+        userId: _currentUserId(),
+        limit: limit,
+      );
       return Right(dtos.map((d) => d.toEntity()).toList());
     } on PostgrestException catch (e) {
       return Left(DiaryServerFailure(e.message));
@@ -36,7 +41,10 @@ class DiaryRepositoryImpl implements DiaryRepository {
   Future<Either<DiaryFailure, Entry>> todayEntry(DateTime localDate) async {
     final iso = _isoDate(localDate);
     try {
-      final dto = await _remote.entryFor(userId: _currentUserId(), localDate: iso);
+      final dto = await _remote.entryFor(
+        userId: _currentUserId(),
+        localDate: iso,
+      );
       if (dto == null) return const Left(DiaryNotFound());
       return Right(dto.toEntity());
     } on PostgrestException catch (e) {
@@ -49,17 +57,21 @@ class DiaryRepositoryImpl implements DiaryRepository {
   }
 
   @override
-  Stream<Either<DiaryFailure, List<Entry>>> watchEntries({int limit = 60}) async* {
+  Stream<Either<DiaryFailure, List<Entry>>> watchEntries({
+    int limit = 60,
+  }) async* {
     final userId = _currentUserId();
     final source = _remote.streamEntries(userId: userId, limit: limit);
-    yield* source.map<Either<DiaryFailure, List<Entry>>>(
-      (dtos) => Right(dtos.map((d) => d.toEntity()).toList()),
-    ).handleError((Object error) {
-      if (error is SocketException) {
-        return const Left(DiaryNetworkFailure('offline'));
-      }
-      return Left(DiaryUnknownFailure(error.toString()));
-    });
+    yield* source
+        .map<Either<DiaryFailure, List<Entry>>>(
+          (dtos) => Right(dtos.map((d) => d.toEntity()).toList()),
+        )
+        .handleError((Object error) {
+          if (error is SocketException) {
+            return const Left(DiaryNetworkFailure('offline'));
+          }
+          return Left(DiaryUnknownFailure(error.toString()));
+        });
   }
 
   @override

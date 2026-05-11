@@ -35,12 +35,13 @@ class _LogMealScreenState extends ConsumerState<LogMealScreen> {
       onSave: () async {
         final title = _title.text.trim();
         if (title.isEmpty) {
-          return ref.read(captureRepositoryProvider).logMeal(
-                mealType: _type,
-                title: '(unnamed meal)',
-              );
+          return ref
+              .read(captureRepositoryProvider)
+              .logMeal(mealType: _type, title: '(unnamed meal)');
         }
-        return ref.read(captureRepositoryProvider).logMeal(
+        return ref
+            .read(captureRepositoryProvider)
+            .logMeal(
               mealType: _type,
               title: title,
               proteinG: num.tryParse(_proteinG.text.trim()),
@@ -56,7 +57,11 @@ class _LogMealScreenState extends ConsumerState<LogMealScreen> {
           },
         ),
         const SizedBox(height: 16),
-        TerminalField(controller: _title, label: 'TITLE', hint: 'tavuklu salata...'),
+        TerminalField(
+          controller: _title,
+          label: 'TITLE',
+          hint: 'tavuklu salata...',
+        ),
         const SizedBox(height: 16),
         TerminalField(
           controller: _proteinG,

@@ -11,8 +11,8 @@ class SkillTreeRepositoryImpl implements SkillTreeRepository {
   SkillTreeRepositoryImpl({
     required SkillTreeRemoteDataSource remote,
     required String Function() currentUserId,
-  })  : _remote = remote,
-        _currentUserId = currentUserId;
+  }) : _remote = remote,
+       _currentUserId = currentUserId;
 
   final SkillTreeRemoteDataSource _remote;
   final String Function() _currentUserId;
@@ -40,13 +40,17 @@ class SkillTreeRepositoryImpl implements SkillTreeRepository {
       // burst feel rewarding without letting one source dominate the
       // tree. Tweak in flight if any skill consistently overshoots.
       final logicXp = (activity['github_events'] ?? 0) * 2;
-      final vitalityXp = (activity['workouts'] ?? 0) * 8 +
+      final vitalityXp =
+          (activity['workouts'] ?? 0) * 8 +
           (activity['motorcycle_rides'] ?? 0) * 4;
-      final linguisticsXp = (activity['german_minutes'] ?? 0) +
+      final linguisticsXp =
+          (activity['german_minutes'] ?? 0) +
           (activity['voice_notes'] ?? 0) * 8;
-      final cultureXp = (activity['movies_watched'] ?? 0) * 10 +
+      final cultureXp =
+          (activity['movies_watched'] ?? 0) * 10 +
           ((activity['music_listens'] ?? 0) ~/ 3);
-      final academicXp = (activity['research_minutes'] ?? 0) +
+      final academicXp =
+          (activity['research_minutes'] ?? 0) +
           (activity['reading_minutes'] ?? 0);
 
       final stats = [
@@ -77,7 +81,9 @@ class SkillTreeRepositoryImpl implements SkillTreeRepository {
         ),
       ];
 
-      final dominant = stats.reduce((a, b) => a.totalXp >= b.totalXp ? a : b).skill;
+      final dominant = stats
+          .reduce((a, b) => a.totalXp >= b.totalXp ? a : b)
+          .skill;
       return Right(SkillTreeSnapshot(stats: stats, dominant: dominant));
     } catch (e) {
       return Left(_classify(e));

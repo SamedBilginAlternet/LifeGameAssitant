@@ -10,8 +10,8 @@ class CaptureRepositoryImpl implements CaptureRepository {
   CaptureRepositoryImpl({
     required CaptureRemoteDataSource remote,
     required String Function() currentUserId,
-  })  : _remote = remote,
-        _currentUserId = currentUserId;
+  }) : _remote = remote,
+       _currentUserId = currentUserId;
 
   final CaptureRemoteDataSource _remote;
   final String Function() _currentUserId;
@@ -37,20 +37,24 @@ class CaptureRepositoryImpl implements CaptureRepository {
 
   @override
   Future<Either<Failure, void>> saveMood({required int score}) {
-    return _guard(() => _remote.upsertDailyLog(
-          userId: _currentUserId(),
-          localDate: _today(),
-          moodScore: score,
-        ));
+    return _guard(
+      () => _remote.upsertDailyLog(
+        userId: _currentUserId(),
+        localDate: _today(),
+        moodScore: score,
+      ),
+    );
   }
 
   @override
   Future<Either<Failure, void>> saveNote({required String note}) {
-    return _guard(() => _remote.upsertDailyLog(
-          userId: _currentUserId(),
-          localDate: _today(),
-          note: note,
-        ));
+    return _guard(
+      () => _remote.upsertDailyLog(
+        userId: _currentUserId(),
+        localDate: _today(),
+        note: note,
+      ),
+    );
   }
 
   @override
@@ -58,12 +62,14 @@ class CaptureRepositoryImpl implements CaptureRepository {
     required String metric,
     required num value,
   }) {
-    return _guard(() => _remote.upsertFitness(
-          userId: _currentUserId(),
-          localDate: _today(),
-          metric: metric,
-          value: value,
-        ));
+    return _guard(
+      () => _remote.upsertFitness(
+        userId: _currentUserId(),
+        localDate: _today(),
+        metric: metric,
+        value: value,
+      ),
+    );
   }
 
   @override
@@ -72,13 +78,15 @@ class CaptureRepositoryImpl implements CaptureRepository {
     required int minutes,
     String? topic,
   }) {
-    return _guard(() => _remote.insertLearning(
-          userId: _currentUserId(),
-          localDate: _today(),
-          track: track,
-          minutes: minutes,
-          topic: topic,
-        ));
+    return _guard(
+      () => _remote.insertLearning(
+        userId: _currentUserId(),
+        localDate: _today(),
+        track: track,
+        minutes: minutes,
+        topic: topic,
+      ),
+    );
   }
 
   @override
@@ -89,15 +97,17 @@ class CaptureRepositoryImpl implements CaptureRepository {
     num? proteinG,
     num? carbsG,
   }) {
-    return _guard(() => _remote.insertMeal(
-          userId: _currentUserId(),
-          localDate: _today(),
-          mealType: mealType,
-          title: title,
-          calories: calories,
-          proteinG: proteinG,
-          carbsG: carbsG,
-        ));
+    return _guard(
+      () => _remote.insertMeal(
+        userId: _currentUserId(),
+        localDate: _today(),
+        mealType: mealType,
+        title: title,
+        calories: calories,
+        proteinG: proteinG,
+        carbsG: carbsG,
+      ),
+    );
   }
 
   @override
@@ -107,14 +117,16 @@ class CaptureRepositoryImpl implements CaptureRepository {
     int? rating,
     String? medium,
   }) {
-    return _guard(() => _remote.insertMovie(
-          userId: _currentUserId(),
-          localDate: _today(),
-          title: title,
-          releaseYear: releaseYear,
-          rating: rating,
-          medium: medium,
-        ));
+    return _guard(
+      () => _remote.insertMovie(
+        userId: _currentUserId(),
+        localDate: _today(),
+        title: title,
+        releaseYear: releaseYear,
+        rating: rating,
+        medium: medium,
+      ),
+    );
   }
 
   @override
@@ -124,14 +136,16 @@ class CaptureRepositoryImpl implements CaptureRepository {
     String? routeTag,
     String? notes,
   }) {
-    return _guard(() => _remote.insertRide(
-          userId: _currentUserId(),
-          localDate: _today(),
-          distanceKm: distanceKm,
-          durationMin: durationMin,
-          routeTag: routeTag,
-          notes: notes,
-        ));
+    return _guard(
+      () => _remote.insertRide(
+        userId: _currentUserId(),
+        localDate: _today(),
+        distanceKm: distanceKm,
+        durationMin: durationMin,
+        routeTag: routeTag,
+        notes: notes,
+      ),
+    );
   }
 
   @override
@@ -141,13 +155,15 @@ class CaptureRepositoryImpl implements CaptureRepository {
     num? totalVolumeKg,
     String? notes,
   }) {
-    return _guard(() => _remote.insertWorkout(
-          userId: _currentUserId(),
-          localDate: _today(),
-          name: name,
-          durationMin: durationMin,
-          totalVolumeKg: totalVolumeKg,
-          notes: notes,
-        ));
+    return _guard(
+      () => _remote.insertWorkout(
+        userId: _currentUserId(),
+        localDate: _today(),
+        name: name,
+        durationMin: durationMin,
+        totalVolumeKg: totalVolumeKg,
+        notes: notes,
+      ),
+    );
   }
 }

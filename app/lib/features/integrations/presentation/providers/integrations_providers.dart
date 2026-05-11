@@ -9,8 +9,8 @@ import 'package:memoir_log/features/integrations/domain/repositories/integration
 
 final integrationsRemoteDataSourceProvider =
     Provider<IntegrationsRemoteDataSource>((ref) {
-  return IntegrationsRemoteDataSource(ref.read(supabaseClientProvider));
-});
+      return IntegrationsRemoteDataSource(ref.read(supabaseClientProvider));
+    });
 
 final integrationsRepositoryProvider = Provider<IntegrationsRepository>((ref) {
   return IntegrationsRepositoryImpl(
@@ -25,15 +25,15 @@ final integrationsRepositoryProvider = Provider<IntegrationsRepository>((ref) {
 
 final githubIntegrationProvider =
     FutureProvider<Either<Failure, GitHubIntegration>>((ref) async {
-  return ref.read(integrationsRepositoryProvider).currentGithub();
-});
+      return ref.read(integrationsRepositoryProvider).currentGithub();
+    });
 
 final spotifyIntegrationProvider =
     FutureProvider<Either<Failure, SpotifyIntegration>>((ref) async {
-  return ref.read(integrationsRepositoryProvider).currentSpotify();
-});
+      return ref.read(integrationsRepositoryProvider).currentSpotify();
+    });
 
 final integrationsHealthProvider =
     FutureProvider<Either<Failure, List<IntegrationHealth>>>((ref) async {
-  return ref.read(integrationsRepositoryProvider).healthSnapshot();
-});
+      return ref.read(integrationsRepositoryProvider).healthSnapshot();
+    });

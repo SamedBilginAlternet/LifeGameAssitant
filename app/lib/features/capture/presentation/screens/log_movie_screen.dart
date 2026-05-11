@@ -33,7 +33,9 @@ class _LogMovieScreenState extends ConsumerState<LogMovieScreen> {
       title: 'MOVIE',
       onSave: () {
         final title = _title.text.trim();
-        return ref.read(captureRepositoryProvider).logMovie(
+        return ref
+            .read(captureRepositoryProvider)
+            .logMovie(
               title: title.isEmpty ? '(untitled)' : title,
               releaseYear: int.tryParse(_year.text.trim()),
               rating: _rating,
@@ -41,7 +43,11 @@ class _LogMovieScreenState extends ConsumerState<LogMovieScreen> {
             );
       },
       children: [
-        TerminalField(controller: _title, label: 'TITLE', hint: 'Blade Runner...'),
+        TerminalField(
+          controller: _title,
+          label: 'TITLE',
+          hint: 'Blade Runner...',
+        ),
         const SizedBox(height: 16),
         TerminalField(
           controller: _year,
@@ -64,9 +70,14 @@ class _LogMovieScreenState extends ConsumerState<LogMovieScreen> {
                     setState(() => _medium = m);
                   },
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 6,
+                      horizontal: 10,
+                    ),
                     child: Text(
-                      _medium == m ? '[> ${m.toUpperCase()}]' : '[ ${m.toUpperCase()} ]',
+                      _medium == m
+                          ? '[> ${m.toUpperCase()}]'
+                          : '[ ${m.toUpperCase()} ]',
                       style: crt.uiType.copyWith(
                         color: _medium == m ? crt.fgBright : crt.fgDim,
                       ),
@@ -77,8 +88,10 @@ class _LogMovieScreenState extends ConsumerState<LogMovieScreen> {
           ],
         ),
         const SizedBox(height: 16),
-        Text('> RATING  ${_rating.toString().padLeft(2)} / 5',
-            style: crt.uiType.copyWith(color: crt.fgDim)),
+        Text(
+          '> RATING  ${_rating.toString().padLeft(2)} / 5',
+          style: crt.uiType.copyWith(color: crt.fgDim),
+        ),
         const SizedBox(height: 4),
         Row(
           children: [

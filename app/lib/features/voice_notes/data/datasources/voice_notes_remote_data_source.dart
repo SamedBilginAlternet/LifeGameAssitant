@@ -28,19 +28,23 @@ class VoiceNotesRemoteDataSource {
     required String storagePath,
     required int durationSec,
   }) async {
-    final res = await _client.from('voice_notes').upsert({
-      'user_id': userId,
-      'local_date': localDate,
-      'storage_path': storagePath,
-      'duration_sec': durationSec,
-      'status': 'pending',
-      'language': null,
-      'transcript_de': null,
-      'transcript_en': null,
-      'corrections': null,
-      'error': null,
-      'processed_at': null,
-    }, onConflict: 'user_id,local_date').select().single();
+    final res = await _client
+        .from('voice_notes')
+        .upsert({
+          'user_id': userId,
+          'local_date': localDate,
+          'storage_path': storagePath,
+          'duration_sec': durationSec,
+          'status': 'pending',
+          'language': null,
+          'transcript_de': null,
+          'transcript_en': null,
+          'corrections': null,
+          'error': null,
+          'processed_at': null,
+        }, onConflict: 'user_id,local_date')
+        .select()
+        .single();
     return res;
   }
 
@@ -48,7 +52,9 @@ class VoiceNotesRemoteDataSource {
     required String storagePath,
     required Uint8List bytes,
   }) async {
-    await _client.storage.from('voice').uploadBinary(
+    await _client.storage
+        .from('voice')
+        .uploadBinary(
           storagePath,
           bytes,
           fileOptions: const FileOptions(
@@ -69,6 +75,8 @@ class VoiceNotesRemoteDataSource {
   }
 
   Future<String> signedAudioUrl(String storagePath) async {
-    return await _client.storage.from('voice').createSignedUrl(storagePath, 600);
+    return await _client.storage
+        .from('voice')
+        .createSignedUrl(storagePath, 600);
   }
 }

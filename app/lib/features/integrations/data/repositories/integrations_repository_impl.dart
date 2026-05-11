@@ -15,9 +15,9 @@ class IntegrationsRepositoryImpl implements IntegrationsRepository {
     required IntegrationsRemoteDataSource remote,
     required String Function() currentUserId,
     SpotifyOAuth? spotifyOAuth,
-  })  : _remote = remote,
-        _currentUserId = currentUserId,
-        _spotifyOAuth = spotifyOAuth ?? SpotifyOAuth();
+  }) : _remote = remote,
+       _currentUserId = currentUserId,
+       _spotifyOAuth = spotifyOAuth ?? SpotifyOAuth();
 
   final IntegrationsRemoteDataSource _remote;
   final String Function() _currentUserId;
@@ -43,17 +43,21 @@ class IntegrationsRepositoryImpl implements IntegrationsRepository {
       if (row == null) {
         return const Right(GitHubIntegration(login: null, connected: false));
       }
-      return Right(GitHubIntegration(
-        login: row['github_login'] as String?,
-        connected: row['github_token'] != null,
-      ));
+      return Right(
+        GitHubIntegration(
+          login: row['github_login'] as String?,
+          connected: row['github_token'] != null,
+        ),
+      );
     } catch (e) {
       return Left(_classify(e));
     }
   }
 
   @override
-  Future<Either<Failure, GitHubIntegration>> connectGithub({required String token}) async {
+  Future<Either<Failure, GitHubIntegration>> connectGithub({
+    required String token,
+  }) async {
     try {
       final login = await _remote.validateGithubToken(token);
       await _remote.upsertGithub(
@@ -89,11 +93,15 @@ class IntegrationsRepositoryImpl implements IntegrationsRepository {
         return const Right(SpotifyIntegration(userId: null, connected: false));
       }
       final lastPolled = row['spotify_last_polled'];
-      return Right(SpotifyIntegration(
-        userId: row['spotify_user_id'] as String?,
-        connected: row['spotify_refresh_token'] != null,
-        lastPolledAt: lastPolled is String ? DateTime.tryParse(lastPolled) : null,
-      ));
+      return Right(
+        SpotifyIntegration(
+          userId: row['spotify_user_id'] as String?,
+          connected: row['spotify_refresh_token'] != null,
+          lastPolledAt: lastPolled is String
+              ? DateTime.tryParse(lastPolled)
+              : null,
+        ),
+      );
     } catch (e) {
       return Left(_classify(e));
     }
@@ -114,11 +122,13 @@ class IntegrationsRepositoryImpl implements IntegrationsRepository {
         codeVerifier: auth.codeVerifier,
         redirectUri: Env.spotifyRedirectUri,
       );
-      return Right(SpotifyIntegration(
-        userId: spotifyUserId,
-        connected: true,
-        lastPolledAt: null,
-      ));
+      return Right(
+        SpotifyIntegration(
+          userId: spotifyUserId,
+          connected: true,
+          lastPolledAt: null,
+        ),
+      );
     } on FormatException catch (e) {
       return Left(AuthFailure(e.message));
     } catch (e) {
@@ -159,10 +169,12 @@ class IntegrationsRepositoryImpl implements IntegrationsRepository {
       for (final kind in _knownKinds) {
         final row = latestByKind[kind];
         if (row == null) {
-          out.add(IntegrationHealth(
-            kind: kind,
-            status: IntegrationHealthStatus.never,
-          ));
+          out.add(
+            IntegrationHealth(
+              kind: kind,
+              status: IntegrationHealthStatus.never,
+            ),
+          );
           continue;
         }
         final ranAt = DateTime.tryParse(row['ran_at'] as String? ?? '');
@@ -176,12 +188,14 @@ class IntegrationsRepositoryImpl implements IntegrationsRepository {
         } else {
           mapped = IntegrationHealthStatus.ok;
         }
-        out.add(IntegrationHealth(
-          kind: kind,
-          status: mapped,
-          lastRunAt: ranAt,
-          error: error,
-        ));
+        out.add(
+          IntegrationHealth(
+            kind: kind,
+            status: mapped,
+            lastRunAt: ranAt,
+            error: error,
+          ),
+        );
       }
       return Right(out);
     } catch (e) {

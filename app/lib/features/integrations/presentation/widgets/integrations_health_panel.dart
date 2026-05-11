@@ -21,14 +21,20 @@ class IntegrationsHealthPanel extends ConsumerWidget {
       children: [
         Row(
           children: [
-            Text('INTEGRATIONS', style: crt.dateHeaderType.copyWith(color: crt.fgDim)),
+            Text(
+              'INTEGRATIONS',
+              style: crt.dateHeaderType.copyWith(color: crt.fgDim),
+            ),
             const SizedBox(width: 12),
             Expanded(child: Container(height: 1, color: crt.fgGhost)),
           ],
         ),
         const SizedBox(height: 8),
         snap.when(
-          loading: () => Text('> CHECKING...', style: crt.bodyType.copyWith(color: crt.fgDim)),
+          loading: () => Text(
+            '> CHECKING...',
+            style: crt.bodyType.copyWith(color: crt.fgDim),
+          ),
           error: (e, _) => Text(
             '> ERROR: ${e.toString().toUpperCase()}',
             style: crt.bodyType.copyWith(color: crt.fgDim),
@@ -40,9 +46,7 @@ class IntegrationsHealthPanel extends ConsumerWidget {
             ),
             (rows) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (final h in rows) _HealthRow(health: h),
-              ],
+              children: [for (final h in rows) _HealthRow(health: h)],
             ),
           ),
         ),
@@ -99,7 +103,8 @@ class _HealthRow extends StatelessWidget {
               ),
             ],
           ),
-          if (health.status == IntegrationHealthStatus.failed && health.error != null)
+          if (health.status == IntegrationHealthStatus.failed &&
+              health.error != null)
             Padding(
               padding: const EdgeInsets.only(left: 8, top: 2),
               child: Text(

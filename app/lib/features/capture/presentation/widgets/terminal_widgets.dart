@@ -5,7 +5,12 @@ import 'package:memoir_log/app/theme/crt_theme.dart';
 /// Terminal-styled rectangular button. Shared by the capture and
 /// settings screens so the look stays consistent without copy-paste.
 class TerminalButton extends StatelessWidget {
-  const TerminalButton({super.key, required this.label, this.onTap, this.glow = true});
+  const TerminalButton({
+    super.key,
+    required this.label,
+    this.onTap,
+    this.glow = true,
+  });
 
   final String label;
   final VoidCallback? onTap;
@@ -74,9 +79,15 @@ class TerminalField extends StatelessWidget {
             hintText: hint,
             hintStyle: crt.bodyType.copyWith(color: crt.fgGhost),
             counterText: '',
-            border: UnderlineInputBorder(borderSide: BorderSide(color: crt.fgDim)),
-            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: crt.fgBright)),
-            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: crt.fgDim)),
+            border: UnderlineInputBorder(
+              borderSide: BorderSide(color: crt.fgDim),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: crt.fgBright),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: crt.fgDim),
+            ),
           ),
         ),
       ],

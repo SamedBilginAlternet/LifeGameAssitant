@@ -2,8 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class IntegrationsRemoteDataSource {
-  IntegrationsRemoteDataSource(this._client, {Dio? dio})
-      : _dio = dio ?? Dio();
+  IntegrationsRemoteDataSource(this._client, {Dio? dio}) : _dio = dio ?? Dio();
 
   final SupabaseClient _client;
   final Dio _dio;
@@ -67,9 +66,7 @@ class IntegrationsRemoteDataSource {
   Future<Map<String, dynamic>?> readSpotify({required String userId}) async {
     return await _client
         .from('integrations')
-        .select(
-          'spotify_refresh_token, spotify_user_id, spotify_last_polled',
-        )
+        .select('spotify_refresh_token, spotify_user_id, spotify_last_polled')
         .eq('user_id', userId)
         .maybeSingle();
   }
@@ -108,11 +105,14 @@ class IntegrationsRemoteDataSource {
   }
 
   Future<void> clearSpotify({required String userId}) async {
-    await _client.from('integrations').update({
-      'spotify_refresh_token': null,
-      'spotify_user_id': null,
-      'spotify_last_polled': null,
-    }).eq('user_id', userId);
+    await _client
+        .from('integrations')
+        .update({
+          'spotify_refresh_token': null,
+          'spotify_user_id': null,
+          'spotify_last_polled': null,
+        })
+        .eq('user_id', userId);
   }
 
   // ── Health ─────────────────────────────────────────────────────────
@@ -120,7 +120,9 @@ class IntegrationsRemoteDataSource {
   /// Returns the most recent integration_runs row per kind for the
   /// given user. The repository converts these into
   /// IntegrationHealthStatus values.
-  Future<List<Map<String, dynamic>>> latestRuns({required String userId}) async {
+  Future<List<Map<String, dynamic>>> latestRuns({
+    required String userId,
+  }) async {
     // No `distinct on` in supabase_dart yet, so pull a small window
     // (last ~24h, capped at 50 rows) and reduce client-side. Cheaper
     // than a full table scan and accurate enough for "latest run".

@@ -30,7 +30,9 @@ class _LogWorkoutScreenState extends ConsumerState<LogWorkoutScreen> {
   Widget build(BuildContext context) {
     return LogScaffold(
       title: 'WORKOUT',
-      onSave: () => ref.read(captureRepositoryProvider).logWorkout(
+      onSave: () => ref
+          .read(captureRepositoryProvider)
+          .logWorkout(
             name: _name.text.trim().isEmpty ? 'Workout' : _name.text.trim(),
             durationMin: int.tryParse(_duration.text.trim()),
             totalVolumeKg: num.tryParse(_volume.text.trim()),

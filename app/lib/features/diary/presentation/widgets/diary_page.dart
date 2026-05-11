@@ -23,7 +23,9 @@ class DiaryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final crt = context.crt;
-    final dateFmt = DateFormat('EEE  dd-MMM-yyyy').format(entry.localDate).toUpperCase();
+    final dateFmt = DateFormat(
+      'EEE  dd-MMM-yyyy',
+    ).format(entry.localDate).toUpperCase();
     final isToday = _isToday(entry.localDate);
 
     return Container(
@@ -79,11 +81,27 @@ class _StatStrip extends StatelessWidget {
         .fold<num>(0, (sum, e) => sum + ((e['minutes'] as num?) ?? 0));
 
     final rows = <Widget>[];
-    if (commits > 0) rows.add(PixelMeter(label: 'commits', value: commits, target: 10, unit: ''));
-    if (steps > 0) rows.add(PixelMeter(label: 'steps', value: steps, target: 10000, unit: ''));
-    if (protein > 0) rows.add(PixelMeter(label: 'protein', value: protein, target: 180, unit: 'g'));
+    if (commits > 0)
+      rows.add(
+        PixelMeter(label: 'commits', value: commits, target: 10, unit: ''),
+      );
+    if (steps > 0)
+      rows.add(
+        PixelMeter(label: 'steps', value: steps, target: 10000, unit: ''),
+      );
+    if (protein > 0)
+      rows.add(
+        PixelMeter(label: 'protein', value: protein, target: 180, unit: 'g'),
+      );
     if (germanMinutes > 0) {
-      rows.add(PixelMeter(label: 'german', value: germanMinutes, target: 30, unit: 'm'));
+      rows.add(
+        PixelMeter(
+          label: 'german',
+          value: germanMinutes,
+          target: 30,
+          unit: 'm',
+        ),
+      );
     }
 
     if (rows.isEmpty) return const SizedBox.shrink();
@@ -113,10 +131,7 @@ class _Header extends StatelessWidget {
         if (skill != null) ...[
           Container(width: 6, height: 6, color: crt.fgBright),
           const SizedBox(width: 6),
-          Text(
-            skill!.label,
-            style: crt.uiType.copyWith(color: crt.fgBright),
-          ),
+          Text(skill!.label, style: crt.uiType.copyWith(color: crt.fgBright)),
         ],
       ],
     );

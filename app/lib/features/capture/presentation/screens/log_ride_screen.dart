@@ -34,7 +34,9 @@ class _LogRideScreenState extends ConsumerState<LogRideScreen> {
       title: 'RIDE — 250NK',
       onSave: () {
         final dist = num.tryParse(_distance.text.trim()) ?? 0;
-        return ref.read(captureRepositoryProvider).logRide(
+        return ref
+            .read(captureRepositoryProvider)
+            .logRide(
               distanceKm: dist,
               durationMin: int.tryParse(_duration.text.trim()),
               routeTag: _route.text.trim().isEmpty ? null : _route.text.trim(),

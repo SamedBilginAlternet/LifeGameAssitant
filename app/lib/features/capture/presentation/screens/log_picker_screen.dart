@@ -28,22 +28,40 @@ class LogPickerScreen extends StatelessWidget {
                 children: [
                   IconButton(
                     onPressed: () => context.pop(),
-                    icon: Text('[<]', style: crt.uiType.copyWith(color: crt.fgBright)),
+                    icon: Text(
+                      '[<]',
+                      style: crt.uiType.copyWith(color: crt.fgBright),
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Text('ADD TO TODAY', style: crt.dateHeaderType),
                 ],
               ),
               const SizedBox(height: 24),
-              TerminalButton(label: '[ QUICK · MOOD/PROTEIN/DE/NOTE ]', onTap: () => go('/capture')),
+              TerminalButton(
+                label: '[ QUICK · MOOD/PROTEIN/DE/NOTE ]',
+                onTap: () => go('/capture'),
+              ),
               const SizedBox(height: 12),
-              TerminalButton(label: '[ MEAL    · log a meal ]', onTap: () => go('/log/meal')),
+              TerminalButton(
+                label: '[ MEAL    · log a meal ]',
+                onTap: () => go('/log/meal'),
+              ),
               const SizedBox(height: 12),
-              TerminalButton(label: '[ WORKOUT · log a session ]', onTap: () => go('/log/workout')),
+              TerminalButton(
+                label: '[ WORKOUT · log a session ]',
+                onTap: () => go('/log/workout'),
+              ),
               const SizedBox(height: 12),
-              TerminalButton(label: '[ MOVIE   · what you watched ]', onTap: () => go('/log/movie')),
+              TerminalButton(
+                label: '[ MOVIE   · what you watched ]',
+                onTap: () => go('/log/movie'),
+              ),
               const SizedBox(height: 12),
-              TerminalButton(label: '[ RIDE    · CF Moto 250NK ]', onTap: () => go('/log/ride')),
+              TerminalButton(
+                label: '[ RIDE    · CF Moto 250NK ]',
+                onTap: () => go('/log/ride'),
+              ),
             ],
           ),
         ),

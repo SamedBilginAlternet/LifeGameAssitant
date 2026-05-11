@@ -10,7 +10,8 @@ class ConnectGithubScreen extends ConsumerStatefulWidget {
   const ConnectGithubScreen({super.key});
 
   @override
-  ConsumerState<ConnectGithubScreen> createState() => _ConnectGithubScreenState();
+  ConsumerState<ConnectGithubScreen> createState() =>
+      _ConnectGithubScreenState();
 }
 
 class _ConnectGithubScreenState extends ConsumerState<ConnectGithubScreen> {
@@ -75,7 +76,10 @@ class _ConnectGithubScreenState extends ConsumerState<ConnectGithubScreen> {
                 children: [
                   IconButton(
                     onPressed: _busy ? null : () => context.pop(),
-                    icon: Text('[<]', style: crt.uiType.copyWith(color: crt.fgBright)),
+                    icon: Text(
+                      '[<]',
+                      style: crt.uiType.copyWith(color: crt.fgBright),
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Text('CONNECT GITHUB', style: crt.dateHeaderType),
@@ -96,7 +100,10 @@ class _ConnectGithubScreenState extends ConsumerState<ConnectGithubScreen> {
               if (_statusLine != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12),
-                  child: Text(_statusLine!, style: crt.bodyType.copyWith(color: crt.fgDim)),
+                  child: Text(
+                    _statusLine!,
+                    style: crt.bodyType.copyWith(color: crt.fgDim),
+                  ),
                 ),
               TerminalButton(
                 label: _busy ? '[ VALIDATING... ]' : '[ CONNECT ]',

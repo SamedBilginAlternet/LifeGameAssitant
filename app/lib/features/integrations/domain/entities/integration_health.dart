@@ -2,11 +2,11 @@ enum IntegrationHealthStatus { ok, stale, failed, never }
 
 extension IntegrationHealthStatusX on IntegrationHealthStatus {
   String get label => switch (this) {
-        IntegrationHealthStatus.ok => 'OK',
-        IntegrationHealthStatus.stale => 'STALE',
-        IntegrationHealthStatus.failed => 'FAILED',
-        IntegrationHealthStatus.never => 'NEVER',
-      };
+    IntegrationHealthStatus.ok => 'OK',
+    IntegrationHealthStatus.stale => 'STALE',
+    IntegrationHealthStatus.failed => 'FAILED',
+    IntegrationHealthStatus.never => 'NEVER',
+  };
 }
 
 class IntegrationHealth {
@@ -26,8 +26,8 @@ class IntegrationHealth {
 
   /// Friendly display label.
   String get displayName => switch (kind) {
-        'github_poll' => 'GITHUB POLL',
-        'spotify_poll' => 'SPOTIFY POLL',
-        _ => kind.toUpperCase(),
-      };
+    'github_poll' => 'GITHUB POLL',
+    'spotify_poll' => 'SPOTIFY POLL',
+    _ => kind.toUpperCase(),
+  };
 }

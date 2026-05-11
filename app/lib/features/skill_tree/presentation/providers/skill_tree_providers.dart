@@ -7,8 +7,9 @@ import 'package:memoir_log/features/skill_tree/data/repositories/skill_tree_repo
 import 'package:memoir_log/features/skill_tree/domain/entities/skill.dart';
 import 'package:memoir_log/features/skill_tree/domain/repositories/skill_tree_repository.dart';
 
-final skillTreeRemoteDataSourceProvider =
-    Provider<SkillTreeRemoteDataSource>((ref) {
+final skillTreeRemoteDataSourceProvider = Provider<SkillTreeRemoteDataSource>((
+  ref,
+) {
   return SkillTreeRemoteDataSource(ref.read(supabaseClientProvider));
 });
 
@@ -25,5 +26,5 @@ final skillTreeRepositoryProvider = Provider<SkillTreeRepository>((ref) {
 
 final skillTreeSnapshotProvider =
     FutureProvider<Either<Failure, SkillTreeSnapshot>>((ref) async {
-  return ref.read(skillTreeRepositoryProvider).snapshot();
-});
+      return ref.read(skillTreeRepositoryProvider).snapshot();
+    });

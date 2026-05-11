@@ -4,12 +4,12 @@ extension SkillX on Skill {
   String get id => name;
 
   String get label => switch (this) {
-        Skill.logic => 'LOGIC',
-        Skill.vitality => 'VITALITY',
-        Skill.linguistics => 'LINGUISTICS',
-        Skill.culture => 'CULTURE',
-        Skill.academic => 'ACADEMIC',
-      };
+    Skill.logic => 'LOGIC',
+    Skill.vitality => 'VITALITY',
+    Skill.linguistics => 'LINGUISTICS',
+    Skill.culture => 'CULTURE',
+    Skill.academic => 'ACADEMIC',
+  };
 }
 
 class SkillStats {

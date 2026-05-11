@@ -2,10 +2,22 @@ import 'package:memoir_log/features/diary/data/dtos/entry_dto.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract class DiaryRemoteDataSource {
-  Future<List<EntryDto>> recentEntries({required String userId, int limit = 60});
-  Future<EntryDto?> entryFor({required String userId, required String localDate});
-  Stream<List<EntryDto>> streamEntries({required String userId, int limit = 60});
-  Future<void> invokeResummarize({required String userId, required String localDate});
+  Future<List<EntryDto>> recentEntries({
+    required String userId,
+    int limit = 60,
+  });
+  Future<EntryDto?> entryFor({
+    required String userId,
+    required String localDate,
+  });
+  Stream<List<EntryDto>> streamEntries({
+    required String userId,
+    int limit = 60,
+  });
+  Future<void> invokeResummarize({
+    required String userId,
+    required String localDate,
+  });
 }
 
 class DiaryRemoteDataSourceImpl implements DiaryRemoteDataSource {
@@ -13,7 +25,10 @@ class DiaryRemoteDataSourceImpl implements DiaryRemoteDataSource {
   final SupabaseClient _client;
 
   @override
-  Future<List<EntryDto>> recentEntries({required String userId, int limit = 60}) async {
+  Future<List<EntryDto>> recentEntries({
+    required String userId,
+    int limit = 60,
+  }) async {
     final rows = await _client
         .from('entries')
         .select()
@@ -24,7 +39,10 @@ class DiaryRemoteDataSourceImpl implements DiaryRemoteDataSource {
   }
 
   @override
-  Future<EntryDto?> entryFor({required String userId, required String localDate}) async {
+  Future<EntryDto?> entryFor({
+    required String userId,
+    required String localDate,
+  }) async {
     final row = await _client
         .from('entries')
         .select()
@@ -35,7 +53,10 @@ class DiaryRemoteDataSourceImpl implements DiaryRemoteDataSource {
   }
 
   @override
-  Stream<List<EntryDto>> streamEntries({required String userId, int limit = 60}) {
+  Stream<List<EntryDto>> streamEntries({
+    required String userId,
+    int limit = 60,
+  }) {
     // Realtime stream filtered by user_id and ordered by local_date desc.
     return _client
         .from('entries')
@@ -47,7 +68,10 @@ class DiaryRemoteDataSourceImpl implements DiaryRemoteDataSource {
   }
 
   @override
-  Future<void> invokeResummarize({required String userId, required String localDate}) async {
+  Future<void> invokeResummarize({
+    required String userId,
+    required String localDate,
+  }) async {
     await _client.functions.invoke(
       'daily-summary',
       body: {'mode': 'user', 'user_id': userId, 'date': localDate},

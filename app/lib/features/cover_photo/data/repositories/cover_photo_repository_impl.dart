@@ -18,8 +18,8 @@ class CoverPhotoRepositoryImpl implements CoverPhotoRepository {
   CoverPhotoRepositoryImpl({
     required CoverPhotoRemoteDataSource remote,
     required String Function() currentUserId,
-  })  : _remote = remote,
-        _currentUserId = currentUserId;
+  }) : _remote = remote,
+       _currentUserId = currentUserId;
 
   final CoverPhotoRemoteDataSource _remote;
   final String Function() _currentUserId;
@@ -42,13 +42,15 @@ class CoverPhotoRepositoryImpl implements CoverPhotoRepository {
         localDate: _isoDate(localDate),
       );
       if (row == null) return const Right(null);
-      return Right(CoverPhoto(
-        localDate: localDate,
-        storagePath: row['storage_path'] as String,
-        dominantHex: row['dominant_hex'] as String?,
-        width: (row['width'] as num?)?.toInt(),
-        height: (row['height'] as num?)?.toInt(),
-      ));
+      return Right(
+        CoverPhoto(
+          localDate: localDate,
+          storagePath: row['storage_path'] as String,
+          dominantHex: row['dominant_hex'] as String?,
+          width: (row['width'] as num?)?.toInt(),
+          height: (row['height'] as num?)?.toInt(),
+        ),
+      );
     } catch (e) {
       return Left(_classify(e));
     }

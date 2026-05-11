@@ -33,9 +33,11 @@ final resummarizeTodayProvider = Provider<ResummarizeToday>((ref) {
 });
 
 /// The timeline's data source. Streams the full sorted entry list.
-final entriesStreamProvider = StreamProvider<Either<DiaryFailure, List<Entry>>>((ref) {
-  // Re-establishes the stream on auth changes so a re-login
-  // re-subscribes against the new user_id.
-  ref.watch(currentUserProvider);
-  return ref.read(watchEntriesProvider).call();
-});
+final entriesStreamProvider = StreamProvider<Either<DiaryFailure, List<Entry>>>(
+  (ref) {
+    // Re-establishes the stream on auth changes so a re-login
+    // re-subscribes against the new user_id.
+    ref.watch(currentUserProvider);
+    return ref.read(watchEntriesProvider).call();
+  },
+);

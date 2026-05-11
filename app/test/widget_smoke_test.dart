@@ -18,8 +18,9 @@ void main() {
       expect(mid.fgBright, isNot(equals(phosphor.fgBright)));
     });
 
-    testWidgets('BuildContext.crt resolves the active extension',
-        (tester) async {
+    testWidgets('BuildContext.crt resolves the active extension', (
+      tester,
+    ) async {
       late CrtTheme resolved;
       await tester.pumpWidget(
         MaterialApp(

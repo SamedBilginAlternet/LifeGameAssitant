@@ -32,14 +32,15 @@ class _ScanlineOverlayState extends ConsumerState<ScanlineOverlay>
     _ticker = createTicker((d) {
       // Repaint at most once per frame.
       setState(() => _elapsed = d);
-    })
-      ..start();
+    })..start();
     unawaited(_load());
   }
 
   Future<void> _load() async {
     try {
-      final program = await ui.FragmentProgram.fromAsset('shaders/scanlines.frag');
+      final program = await ui.FragmentProgram.fromAsset(
+        'shaders/scanlines.frag',
+      );
       if (mounted) setState(() => _program = program);
     } catch (_) {
       // Shader compilation can fail on older devices. Fall back to no
@@ -115,7 +116,5 @@ class _ScanlinePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _ScanlinePainter old) =>
-      old.elapsed != elapsed ||
-      old.opacity != opacity ||
-      old.tint != tint;
+      old.elapsed != elapsed || old.opacity != opacity || old.tint != tint;
 }
