@@ -20,7 +20,57 @@ flutter pub get
 
 ## Environment variables
 
-The app reads its config from `--dart-define` flags. Two are required:
+Two paths — pick one.
+
+### Path A — Infisical (Recommended; cross-PC, cross-CI)
+
+All secrets live in one Infisical project. The `scripts/dev.sh`
+(or `.ps1`) wrapper pulls them and passes the right ones to
+`flutter run --dart-define=...`, so you never edit `launch.json`.
+
+```bash
+# one-time per machine
+infisical login
+
+# one-time per repo clone — links this checkout to the Infisical workspace
+infisical init
+
+# every run
+./scripts/dev.sh           # macOS / Linux — defaults to -d chrome
+./scripts/dev.sh -d ios    # pass extra args after the script name
+.\scripts\dev.ps1          # Windows PowerShell
+```
+
+The Infisical project should hold these keys in the `dev` environment:
+
+| Key                       | Used by                                 |
+|---------------------------|------------------------------------------|
+| `SUPABASE_URL`            | Flutter app (dart-define)                |
+| `SUPABASE_ANON_KEY`       | Flutter app (dart-define)                |
+| `SPOTIFY_CLIENT_ID`       | Flutter app + spotify-poll Edge Function |
+| `SPOTIFY_REDIRECT_URI`    | Flutter app                              |
+| `GROQ_API_KEY`            | daily-summary / weekly-summary / voice-transcribe Edge Functions |
+| `CRON_SECRET`             | All cron-invoked Edge Functions          |
+
+Push the server-side ones to Supabase with:
+
+```bash
+./scripts/sync-supabase-secrets.sh   # or .ps1 on Windows
+```
+
+That script forwards only the Edge-Function-scoped keys
+(`GROQ_API_KEY`, `CRON_SECRET`, `SPOTIFY_CLIENT_ID`) — the public
+client keys stay in Infisical.
+
+The GitHub Action at `.github/workflows/deploy-edge-functions.yml`
+mirrors this in CI: it logs in to Infisical via a machine identity,
+syncs secrets to Supabase, then deploys every function on push to
+`main`.
+
+### Path B — Plain `--dart-define` flags (no extra tooling)
+
+If you don't want the Infisical dependency, the app still accepts the
+flags directly. Two are required:
 
 | Var                       | Required | Where to find it                                                |
 |---------------------------|:--------:|-----------------------------------------------------------------|
