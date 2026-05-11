@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:memoir_log/core/supabase_providers.dart';
 import 'package:memoir_log/features/auth/presentation/screens/login_screen.dart';
+import 'package:memoir_log/features/boot/presentation/screens/boot_screen.dart';
 import 'package:memoir_log/features/capture/presentation/screens/capture_screen.dart';
 import 'package:memoir_log/features/capture/presentation/screens/log_meal_screen.dart';
 import 'package:memoir_log/features/capture/presentation/screens/log_movie_screen.dart';
@@ -22,16 +23,21 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.watch(authStateChangesProvider);
 
   return GoRouter(
-    initialLocation: '/timeline',
+    initialLocation: '/boot',
     redirect: (context, state) {
       final user = ref.read(currentUserProvider);
       final loggingIn = state.matchedLocation == '/login';
+      // /boot is allowed for everyone — it routes onwards itself
+      // (to /login or /timeline depending on auth state).
+      final booting = state.matchedLocation == '/boot';
 
+      if (booting) return null;
       if (user == null) return loggingIn ? null : '/login';
       if (loggingIn) return '/timeline';
       return null;
     },
     routes: [
+      GoRoute(path: '/boot', builder: (context, state) => const BootScreen()),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: '/timeline',
