@@ -46,6 +46,7 @@ dependencies:
   # Cover photo capture (Phase 4.5)
   image_picker: ^1.1.2
   flutter_image_compress: ^2.3.0
+  palette_generator: ^0.3.3+5
 
   # Voice notes (Phase 5)
   record: ^5.1.2

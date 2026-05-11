@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/painting.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:memoir_log/core/failure.dart';
 import 'package:memoir_log/features/cover_photo/data/datasources/cover_photo_remote_data_source.dart';
 import 'package:memoir_log/features/cover_photo/domain/entities/cover_photo.dart';
 import 'package:memoir_log/features/cover_photo/domain/repositories/cover_photo_repository.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// 1280px on the long edge keeps cover photos under ~250KB at q70 — fits
@@ -71,16 +73,54 @@ class CoverPhotoRepositoryImpl implements CoverPhotoRepository {
         format: CompressFormat.jpeg,
       );
 
+      final dominantHex = await _extractDominantHex(compressed);
+
       final iso = _isoDate(localDate);
       final path = await _remote.uploadCover(
         userId: _currentUserId(),
         localDate: iso,
         bytes: compressed,
+        dominantHex: dominantHex,
       );
 
-      return Right(CoverPhoto(localDate: localDate, storagePath: path));
+      return Right(
+        CoverPhoto(
+          localDate: localDate,
+          storagePath: path,
+          dominantHex: dominantHex,
+        ),
+      );
     } catch (e) {
       return Left(_classify(e));
+    }
+  }
+
+  /// Extracts a single dominant hex from the compressed JPEG bytes. We
+  /// intentionally pass the *already-compressed* buffer so the palette
+  /// scan happens on the same pixels the diary will eventually dither,
+  /// not on an oversized original.
+  ///
+  /// Returns null on any failure — dominant_hex is optional in the DB
+  /// and the narrator prompt rule degrades gracefully when it's absent.
+  Future<String?> _extractDominantHex(Uint8List bytes) async {
+    try {
+      final palette = await PaletteGenerator.fromImageProvider(
+        MemoryImage(bytes),
+        // Cap the sample region — the generator does its own downsample
+        // but a soft cap keeps the scan under ~50ms on mid-range phones.
+        size: const Size(120, 120),
+        maximumColorCount: 8,
+      );
+      final color = palette.dominantColor?.color;
+      if (color == null) return null;
+      final r = (color.r * 255).round() & 0xff;
+      final g = (color.g * 255).round() & 0xff;
+      final b = (color.b * 255).round() & 0xff;
+      return '#${r.toRadixString(16).padLeft(2, '0')}'
+          '${g.toRadixString(16).padLeft(2, '0')}'
+          '${b.toRadixString(16).padLeft(2, '0')}';
+    } catch (_) {
+      return null;
     }
   }
 
