@@ -23,6 +23,8 @@ Numbered, applied in order. Idempotent — re-running is safe.
 | `0009_voice.sql` | `voice_notes` table |
 | `0010_weekly_summaries.sql` | `weekly_summaries` table |
 | `0011_cron_weekly_summary.sql` | `pg_cron` schedule for `weekly-summary` Sundays at `:30` |
+| `0012_seed_demo_user.sql` | **No-op.** Originally seeded `admin@demo.local`; raw-SQL inserts into `auth.users` couldn't satisfy GoTrue's user query. Seed demo users via the dashboard's Authentication → Users → Add user flow. |
+| `0013_fix_demo_user.sql` | **No-op.** Failed second attempt at the same thing. |
 
 ### Prerequisites
 
