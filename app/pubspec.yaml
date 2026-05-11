@@ -81,5 +81,6 @@ flutter:
   # Pixel icon sprites land in Phase 4.
   assets:
     - assets/audio/
+    - assets/fonts/
     - shaders/scanlines.frag
     - shaders/dither.frag

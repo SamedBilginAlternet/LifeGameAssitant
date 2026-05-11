@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:memoir_log/app/theme/crt_theme.dart';
 
 void main() {
+  // Block google_fonts from reaching the network during tests. The CRT
+  // theme calls GoogleFonts.vt323/shareTechMono/pressStart2p inside its
+  // constructors; without this flag, each test triggers an HTTP fetch
+  // that the test binding intercepts and turns into a 400, which the
+  // package then re-throws as a test failure.
+  setUpAll(() {
+    GoogleFonts.config.allowRuntimeFetching = false;
+  });
+
   group('CrtTheme', () {
     test('amber and phosphor expose distinct foreground colors', () {
       final amber = CrtTheme.amber();
