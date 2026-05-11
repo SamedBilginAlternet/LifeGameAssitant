@@ -106,6 +106,32 @@ Auto-sync runs on every app foreground after sign-in and writes rows
 to `fitness_data` with `source` = `healthkit` or `health_connect`. The
 manual protein quick-add (capture flow) still writes `source='manual'`.
 
+### Local notifications (Phase 7+ mood prompt)
+
+A daily reminder fires at **22:30 local time** nudging the user to log
+mood, protein, or anything still loose. Configurable in Settings →
+REMINDERS. Persisted across launches via shared_preferences.
+
+Required native config:
+
+- **iOS** — `app/ios/Runner/Info.plist`: ensure the
+  `flutter_local_notifications` plugin's setup is followed (no extra
+  plist keys beyond what `flutter_local_notifications` documents). On
+  iOS 15+ the system grants notifications via the plugin's runtime
+  permission prompt; we request it lazily when the user toggles the
+  prompt ON.
+- **Android 13+** — `app/android/app/src/main/AndroidManifest.xml`:
+  ```xml
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+  <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+  ```
+  We use `AndroidScheduleMode.inexactAllowWhileIdle` so SCHEDULE_EXACT_ALARM
+  is only required if you later raise the precision.
+
+Tapping the notification routes to `/capture` via a static callback
+registered in main.dart.
+
 ### VS Code launch config
 
 Copy `.vscode/launch.json.example` to `.vscode/launch.json` and fill in your values. The example is gitignored except for the `.example`.

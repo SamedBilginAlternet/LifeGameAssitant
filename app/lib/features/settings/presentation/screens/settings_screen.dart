@@ -8,6 +8,7 @@ import 'package:memoir_log/app/theme/crt_theme.dart';
 import 'package:memoir_log/app/theme/scanline_overlay.dart';
 import 'package:memoir_log/app/theme/theme_provider.dart';
 import 'package:memoir_log/core/audio_service.dart';
+import 'package:memoir_log/core/mood_prompt_providers.dart';
 import 'package:memoir_log/core/supabase_providers.dart';
 import 'package:memoir_log/features/backup/presentation/providers/backup_providers.dart';
 import 'package:memoir_log/features/integrations/presentation/providers/integrations_providers.dart';
@@ -22,6 +23,7 @@ class SettingsScreen extends ConsumerWidget {
     final palette = ref.watch(crtPaletteProvider);
     final scanlines = ref.watch(scanlinesEnabledProvider);
     final audio = ref.watch(audioEnabledProvider);
+    final moodPrompt = ref.watch(moodPromptEnabledProvider);
 
     return Scaffold(
       backgroundColor: crt.bgCanvas,
@@ -78,6 +80,18 @@ class SettingsScreen extends ConsumerWidget {
                   HapticFeedback.selectionClick();
                   ref.read(audioEnabledProvider.notifier).state = v;
                   if (v) ref.read(audioServiceProvider).confirm();
+                },
+              ),
+              const SizedBox(height: 32),
+              const _SectionHeader('REMINDERS'),
+              _ToggleRow(
+                label: 'EVENING MOOD PROMPT',
+                value: moodPrompt,
+                onChanged: (v) {
+                  HapticFeedback.selectionClick();
+                  unawaited(
+                    ref.read(moodPromptEnabledProvider.notifier).set(v),
+                  );
                 },
               ),
               const SizedBox(height: 32),

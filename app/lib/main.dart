@@ -8,6 +8,8 @@ import 'package:memoir_log/app/theme/scanline_overlay.dart';
 import 'package:memoir_log/app/theme/theme_provider.dart';
 import 'package:memoir_log/app/theme/themes.dart';
 import 'package:memoir_log/core/env.dart';
+import 'package:memoir_log/core/mood_prompt_providers.dart';
+import 'package:memoir_log/core/mood_prompt_service.dart';
 import 'package:memoir_log/core/supabase_providers.dart';
 import 'package:memoir_log/features/fitness_sync/presentation/providers/fitness_sync_providers.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -49,6 +51,14 @@ class _MemoirLogAppState extends ConsumerState<MemoirLogApp>
     // Cold-start sync once a signed-in user is observed. Fires on every
     // launch; the upsert is idempotent on (user_id, local_date, metric).
     _maybeSyncFitness();
+    // Touch the mood-prompt provider so it reads the persisted toggle
+    // and (re)schedules the daily 22:30 notification on every cold
+    // start. The schedule is idempotent inside the plugin.
+    ref.read(moodPromptEnabledProvider);
+    // Notification tap → capture screen.
+    MoodPromptService.onTapHandler = (_) {
+      ref.read(routerProvider).push('/capture');
+    };
   }
 
   @override

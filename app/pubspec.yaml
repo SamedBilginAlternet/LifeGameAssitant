@@ -56,6 +56,11 @@ dependencies:
   # HealthKit / Health Connect bridge (Phase 3 — auto-capture steps + calories)
   health: ^13.0.0
 
+  # Evening mood-prompt local notification (Phase 7+)
+  flutter_local_notifications: ^19.0.0
+  timezone: ^0.10.0
+  shared_preferences: ^2.3.2
+
   # Backup export + share-card (Phase 7+)
   share_plus: ^10.1.2
 
