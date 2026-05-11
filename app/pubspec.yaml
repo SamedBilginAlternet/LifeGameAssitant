@@ -53,6 +53,9 @@ dependencies:
   permission_handler: ^11.3.1
   path_provider: ^2.1.4
 
+  # HealthKit / Health Connect bridge (Phase 3 — auto-capture steps + calories)
+  health: ^13.0.0
+
   # Backup export + share-card (Phase 7+)
   share_plus: ^10.1.2
 

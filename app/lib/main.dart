@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,6 +8,8 @@ import 'package:memoir_log/app/theme/scanline_overlay.dart';
 import 'package:memoir_log/app/theme/theme_provider.dart';
 import 'package:memoir_log/app/theme/themes.dart';
 import 'package:memoir_log/core/env.dart';
+import 'package:memoir_log/core/supabase_providers.dart';
+import 'package:memoir_log/features/fitness_sync/presentation/providers/fitness_sync_providers.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
@@ -29,11 +33,46 @@ Future<void> main() async {
   runApp(const ProviderScope(child: MemoirLogApp()));
 }
 
-class MemoirLogApp extends ConsumerWidget {
+class MemoirLogApp extends ConsumerStatefulWidget {
   const MemoirLogApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MemoirLogApp> createState() => _MemoirLogAppState();
+}
+
+class _MemoirLogAppState extends ConsumerState<MemoirLogApp>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    // Cold-start sync once a signed-in user is observed. Fires on every
+    // launch; the upsert is idempotent on (user_id, local_date, metric).
+    _maybeSyncFitness();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _maybeSyncFitness();
+    }
+  }
+
+  void _maybeSyncFitness() {
+    final user = ref.read(currentUserProvider);
+    if (user == null) return;
+    final repo = ref.read(fitnessSyncRepositoryProvider);
+    unawaited(repo.syncToday());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final palette = ref.watch(crtPaletteProvider);
     final router = ref.watch(routerProvider);
     return MaterialApp.router(

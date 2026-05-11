@@ -79,6 +79,33 @@ The `record` package needs explicit permission strings:
 - **Android** — `app/android/app/src/main/AndroidManifest.xml`: add
   `<uses-permission android:name="android.permission.RECORD_AUDIO"/>`.
 
+### HealthKit / Health Connect (Phase 3 auto-capture)
+
+The `health` package reads steps + active energy on app foreground.
+Required native config:
+
+- **iOS** — `app/ios/Runner/Info.plist`: add
+  - `NSHealthShareUsageDescription` =
+    `"MEMOIR_LOG reads steps and active energy so your diary covers the body's day automatically."`
+  - The HealthKit capability must be enabled in Xcode → Signing &
+    Capabilities → + Capability → HealthKit.
+- **Android** — `app/android/app/src/main/AndroidManifest.xml`:
+  ```xml
+  <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+  <uses-permission android:name="android.permission.health.READ_STEPS"/>
+  <uses-permission android:name="android.permission.health.READ_ACTIVE_CALORIES_BURNED"/>
+  <queries>
+    <package android:name="com.google.android.apps.healthdata"/>
+  </queries>
+  ```
+  On API 33+ devices the user is bounced to Health Connect to grant
+  read permission; the in-app flow surfaces this via
+  `FitnessSyncRepository.requestPermissions`.
+
+Auto-sync runs on every app foreground after sign-in and writes rows
+to `fitness_data` with `source` = `healthkit` or `health_connect`. The
+manual protein quick-add (capture flow) still writes `source='manual'`.
+
 ### VS Code launch config
 
 Copy `.vscode/launch.json.example` to `.vscode/launch.json` and fill in your values. The example is gitignored except for the `.example`.
