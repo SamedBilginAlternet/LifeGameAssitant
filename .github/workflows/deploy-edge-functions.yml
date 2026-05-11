@@ -1,0 +1,72 @@
+name: Deploy Edge Functions
+
+# Auto-deploys every Edge Function under supabase/functions/ whenever
+# main moves and the change touches that directory. Secrets are pulled
+# from Infisical via a machine identity (no GitHub-stored secret values
+# beyond the Infisical client id / client secret + Supabase project ref).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/functions/**'
+      - '.github/workflows/deploy-edge-functions.yml'
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-edge-functions
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Install Infisical CLI
+        run: |
+          curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' | sudo -E bash
+          sudo apt-get update
+          sudo apt-get install -y infisical
+
+      # Pulls dev secrets and pushes them to Supabase Edge Function
+      # Secrets, then deploys every function in supabase/functions/.
+      # The machine identity must have read access to the dev env in
+      # Infisical and be added as a member to the workspace.
+      - name: Sync secrets from Infisical to Supabase
+        env:
+          INFISICAL_TOKEN: ${{ steps.infisical-auth.outputs.token }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          export INFISICAL_TOKEN=$(infisical login \
+            --method=universal-auth \
+            --client-id=${{ secrets.INFISICAL_CLIENT_ID }} \
+            --client-secret=${{ secrets.INFISICAL_CLIENT_SECRET }} \
+            --plain --silent)
+          # Forward only the keys Edge Functions consume.
+          for key in GROQ_API_KEY CRON_SECRET SPOTIFY_CLIENT_ID; do
+            val=$(infisical secrets get "$key" \
+              --env=prod \
+              --projectId=${{ secrets.INFISICAL_PROJECT_ID }} \
+              --plain --silent || true)
+            if [ -n "$val" ]; then
+              supabase secrets set "$key=$val" \
+                --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+            fi
+          done
+
+      - name: Deploy functions
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          for fn_dir in supabase/functions/*/; do
+            name=$(basename "$fn_dir")
+            echo "→ deploying $name"
+            supabase functions deploy "$name" \
+              --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+          done
