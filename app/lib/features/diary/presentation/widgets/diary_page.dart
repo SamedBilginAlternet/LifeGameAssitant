@@ -1,58 +1,85 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:memoir_log/app/theme/crt_theme.dart';
 import 'package:memoir_log/features/cover_photo/presentation/widgets/cover_photo_chip.dart';
 import 'package:memoir_log/features/cover_photo/presentation/widgets/cover_photo_view.dart';
 import 'package:memoir_log/features/diary/domain/entities/entry.dart';
 import 'package:memoir_log/features/diary/presentation/widgets/pixel_meter.dart';
+import 'package:memoir_log/features/diary/presentation/widgets/share_card.dart';
 import 'package:memoir_log/features/diary/presentation/widgets/typewriter_text.dart';
 import 'package:memoir_log/features/voice_notes/presentation/widgets/voice_note_card.dart';
 import 'package:memoir_log/features/voice_notes/presentation/widgets/voice_note_chip.dart';
 
 /// One day = one terminal-window page on the timeline.
-class DiaryPage extends StatelessWidget {
+class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key, required this.entry});
 
   final Entry entry;
+
+  @override
+  State<DiaryPage> createState() => _DiaryPageState();
+}
+
+class _DiaryPageState extends State<DiaryPage> {
+  final GlobalKey _boundaryKey = GlobalKey();
 
   bool _isToday(DateTime d) {
     final now = DateTime.now();
     return d.year == now.year && d.month == now.month && d.day == now.day;
   }
 
+  Future<void> _share() async {
+    unawaited(HapticFeedback.mediumImpact());
+    final dateLabel = DateFormat('dd-MMM-yyyy').format(widget.entry.localDate);
+    await captureAndShareDiaryPage(
+      boundaryKey: _boundaryKey,
+      subject: 'memoir_log · $dateLabel',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final crt = context.crt;
+    final entry = widget.entry;
     final dateFmt = DateFormat(
       'EEE  dd-MMM-yyyy',
     ).format(entry.localDate).toUpperCase();
     final isToday = _isToday(entry.localDate);
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: crt.bgSurface,
-        border: Border.all(color: crt.fgDim),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _Header(date: dateFmt, skill: entry.topSkill),
-          const SizedBox(height: 16),
-          _Body(entry: entry),
-          if (entry.stats != null && entry.status == EntryStatus.ok) ...[
-            const SizedBox(height: 16),
-            _StatStrip(stats: entry.stats!),
-          ],
-          const SizedBox(height: 8),
-          CoverPhotoView(localDate: entry.localDate),
-          VoiceNoteCard(localDate: entry.localDate),
-          if (isToday) ...[
-            CoverPhotoChip(localDate: entry.localDate),
-            VoiceNoteChip(localDate: entry.localDate),
-          ],
-        ],
+    return GestureDetector(
+      onLongPress: _share,
+      child: RepaintBoundary(
+        key: _boundaryKey,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: crt.bgSurface,
+            border: Border.all(color: crt.fgDim),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _Header(date: dateFmt, skill: entry.topSkill),
+              const SizedBox(height: 16),
+              _Body(entry: entry),
+              if (entry.stats != null && entry.status == EntryStatus.ok) ...[
+                const SizedBox(height: 16),
+                _StatStrip(stats: entry.stats!),
+              ],
+              const SizedBox(height: 8),
+              CoverPhotoView(localDate: entry.localDate),
+              VoiceNoteCard(localDate: entry.localDate),
+              if (isToday) ...[
+                CoverPhotoChip(localDate: entry.localDate),
+                VoiceNoteChip(localDate: entry.localDate),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }
