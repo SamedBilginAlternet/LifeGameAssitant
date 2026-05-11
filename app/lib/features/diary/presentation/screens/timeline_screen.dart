@@ -8,6 +8,9 @@ import 'package:memoir_log/app/theme/crt_theme.dart';
 import 'package:memoir_log/features/diary/domain/entities/entry.dart';
 import 'package:memoir_log/features/diary/presentation/providers/diary_providers.dart';
 import 'package:memoir_log/features/diary/presentation/widgets/diary_page.dart';
+import 'package:memoir_log/features/weekly_digest/domain/entities/weekly_summary.dart';
+import 'package:memoir_log/features/weekly_digest/presentation/providers/weekly_summary_providers.dart';
+import 'package:memoir_log/features/weekly_digest/presentation/widgets/weekly_digest_card.dart';
 
 class TimelineScreen extends ConsumerWidget {
   const TimelineScreen({super.key});
@@ -148,14 +151,14 @@ class _TransmissionIndicatorState extends State<_TransmissionIndicator> {
   }
 }
 
-class _EntriesList extends StatelessWidget {
+class _EntriesList extends ConsumerWidget {
   const _EntriesList({required this.entries, required this.onRefresh});
 
   final List<Entry> entries;
   final Future<void> Function() onRefresh;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final crt = context.crt;
     if (entries.isEmpty) {
       return RefreshIndicator(
@@ -168,17 +171,75 @@ class _EntriesList extends StatelessWidget {
         ),
       );
     }
+
+    final weeklies = ref.watch(recentWeeklySummariesProvider);
+    final weeklyList = weeklies.maybeWhen(
+      data: (either) => either.fold(
+        (_) => const <WeeklySummary>[],
+        (list) =>
+            list.where((w) => w.status == WeeklySummaryStatus.ok).toList(),
+      ),
+      orElse: () => const <WeeklySummary>[],
+    );
+
+    // Interleave weeklies with daily entries — a weekly card lands
+    // immediately above the first daily entry whose date is on or
+    // before the weekly's week_end_date. Both lists are sorted newest
+    // first so a single linear pass is enough.
+    final items = _interleave(entries, weeklyList);
+
     return RefreshIndicator(
       color: crt.fgBright,
       backgroundColor: crt.bgSurface,
       onRefresh: onRefresh,
       child: ListView.builder(
         padding: const EdgeInsets.only(bottom: 24),
-        itemCount: entries.length,
-        itemBuilder: (context, i) => DiaryPage(entry: entries[i]),
+        itemCount: items.length,
+        itemBuilder: (context, i) {
+          final item = items[i];
+          if (item is _DailyItem) return DiaryPage(entry: item.entry);
+          if (item is _WeeklyItem) {
+            return WeeklyDigestCard(summary: item.summary);
+          }
+          return const SizedBox.shrink();
+        },
       ),
     );
   }
+
+  List<Object> _interleave(List<Entry> daily, List<WeeklySummary> weekly) {
+    final out = <Object>[];
+    final remainingWeekly = [...weekly];
+    for (final entry in daily) {
+      // Drop in any weekly summaries whose end_date is after this
+      // entry's date — they belong above it in the (newest-first)
+      // timeline.
+      remainingWeekly.removeWhere((w) {
+        if (!w.weekEndDate.isBefore(entry.localDate)) {
+          out.add(_WeeklyItem(w));
+          return true;
+        }
+        return false;
+      });
+      out.add(_DailyItem(entry));
+    }
+    // Any weekly summaries older than every daily entry still trail
+    // at the bottom.
+    for (final w in remainingWeekly) {
+      out.add(_WeeklyItem(w));
+    }
+    return out;
+  }
+}
+
+class _DailyItem {
+  const _DailyItem(this.entry);
+  final Entry entry;
+}
+
+class _WeeklyItem {
+  const _WeeklyItem(this.summary);
+  final WeeklySummary summary;
 }
 
 /// Empty-state hero: ASCII banner + tagline + quick-actions + a hint
