@@ -9,7 +9,9 @@ import 'package:memoir_log/app/theme/scanline_overlay.dart';
 import 'package:memoir_log/app/theme/theme_provider.dart';
 import 'package:memoir_log/core/audio_service.dart';
 import 'package:memoir_log/core/supabase_providers.dart';
+import 'package:memoir_log/features/backup/presentation/providers/backup_providers.dart';
 import 'package:memoir_log/features/integrations/presentation/providers/integrations_providers.dart';
+import 'package:share_plus/share_plus.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -78,6 +80,9 @@ class SettingsScreen extends ConsumerWidget {
                   if (v) ref.read(audioServiceProvider).confirm();
                 },
               ),
+              const SizedBox(height: 32),
+              const _SectionHeader('DATA'),
+              _ExportRow(),
               const Spacer(),
               const _SectionHeader('SESSION'),
               const SizedBox(height: 8),
@@ -230,6 +235,61 @@ class _GithubRow extends ConsumerWidget {
                     color: g.connected ? crt.fgBright : crt.fgDim,
                   ),
                 ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ExportRow extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_ExportRow> createState() => _ExportRowState();
+}
+
+class _ExportRowState extends ConsumerState<_ExportRow> {
+  bool _busy = false;
+
+  Future<void> _export() async {
+    if (_busy) return;
+    unawaited(HapticFeedback.selectionClick());
+    setState(() => _busy = true);
+    try {
+      final repo = ref.read(backupRepositoryProvider);
+      final result = await repo.exportToFile();
+      if (!mounted) return;
+      await result.match(
+        (failure) async {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('export failed: ${failure.message}')),
+          );
+        },
+        (path) async {
+          await Share.shareXFiles([XFile(path)], subject: 'memoir_log export');
+        },
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final crt = context.crt;
+    return InkWell(
+      onTap: _busy ? null : _export,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            Text('EXPORT', style: crt.uiType.copyWith(color: crt.fgBright)),
+            const Spacer(),
+            Text(
+              _busy ? '[ DUMPING... ]' : '[ JSON  ]',
+              style: crt.uiType.copyWith(
+                color: _busy ? crt.fgDim : crt.fgBright,
               ),
             ),
           ],
