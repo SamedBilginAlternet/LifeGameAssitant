@@ -25,7 +25,7 @@ class _VoiceNoteChipState extends ConsumerState<VoiceNoteChip> {
 
   Future<void> _start() async {
     if (_busy || _recording) return;
-    HapticFeedback.mediumImpact();
+    unawaited(HapticFeedback.mediumImpact());
     final repo = ref.read(voiceNotesRepositoryProvider);
     final result = await repo.startRecording();
     result.match(

@@ -3,7 +3,7 @@
 /// converted to Either<Failure, T> — they never cross into domain or
 /// presentation. Pattern-matching on the sealed hierarchy gives us
 /// exhaustive UI handling.
-sealed class Failure {
+abstract base class Failure {
   const Failure(this.message);
   final String message;
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,7 +23,7 @@ class _CoverPhotoChipState extends ConsumerState<CoverPhotoChip> {
 
   Future<void> _attach() async {
     if (_busy) return;
-    HapticFeedback.selectionClick();
+    unawaited(HapticFeedback.selectionClick());
     setState(() => _busy = true);
     try {
       final picker = ImagePicker();

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,7 +30,7 @@ class _ConnectSpotifyScreenState extends ConsumerState<ConnectSpotifyScreen> {
       _busy = true;
       _statusLine = '> AWAITING SPOTIFY GRANT...';
     });
-    HapticFeedback.mediumImpact();
+    unawaited(HapticFeedback.mediumImpact());
 
     final repo = ref.read(integrationsRepositoryProvider);
     final result = await repo.connectSpotify();

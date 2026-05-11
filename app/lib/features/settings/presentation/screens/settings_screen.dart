@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,7 +46,7 @@ class SettingsScreen extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 24),
-              _SectionHeader('DISPLAY'),
+              const _SectionHeader('DISPLAY'),
               _PaletteRow(
                 value: palette,
                 onChanged: (next) {
@@ -62,11 +64,11 @@ class SettingsScreen extends ConsumerWidget {
                 },
               ),
               const SizedBox(height: 32),
-              _SectionHeader('INTEGRATIONS'),
+              const _SectionHeader('INTEGRATIONS'),
               _GithubRow(),
               _SpotifyRow(),
               const SizedBox(height: 32),
-              _SectionHeader('AUDIO'),
+              const _SectionHeader('AUDIO'),
               _ToggleRow(
                 label: 'CLICK TRACK + SFX',
                 value: audio,
@@ -77,11 +79,11 @@ class SettingsScreen extends ConsumerWidget {
                 },
               ),
               const Spacer(),
-              _SectionHeader('SESSION'),
+              const _SectionHeader('SESSION'),
               const SizedBox(height: 8),
               InkWell(
                 onTap: () async {
-                  HapticFeedback.heavyImpact();
+                  unawaited(HapticFeedback.heavyImpact());
                   await ref.read(supabaseClientProvider).auth.signOut();
                   if (context.mounted) context.go('/login');
                 },

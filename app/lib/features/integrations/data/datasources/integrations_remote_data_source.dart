@@ -48,7 +48,7 @@ class IntegrationsRemoteDataSource {
         },
         sendTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
-        validateStatus: (s) => s != null && s < 500,
+        validateStatus: (int? s) => s != null && s < 500,
       ),
     );
     if (res.statusCode != 200) {

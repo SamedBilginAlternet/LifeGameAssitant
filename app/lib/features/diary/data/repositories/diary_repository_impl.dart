@@ -68,9 +68,13 @@ class DiaryRepositoryImpl implements DiaryRepository {
         )
         .handleError((Object error) {
           if (error is SocketException) {
-            return const Left(DiaryNetworkFailure('offline'));
+            return const Left<DiaryFailure, List<Entry>>(
+              DiaryNetworkFailure('offline'),
+            );
           }
-          return Left(DiaryUnknownFailure(error.toString()));
+          return Left<DiaryFailure, List<Entry>>(
+            DiaryUnknownFailure(error.toString()),
+          );
         });
   }
 

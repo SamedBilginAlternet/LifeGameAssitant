@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,7 +43,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       _busy = true;
       _statusLine = '> SAVING...';
     });
-    HapticFeedback.mediumImpact();
+    unawaited(HapticFeedback.mediumImpact());
 
     final repo = ref.read(captureRepositoryProvider);
     final results = <Either<Failure, void>>[];

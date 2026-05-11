@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,7 +39,7 @@ class _LogScaffoldState extends ConsumerState<LogScaffold> {
       _busy = true;
       _statusLine = '> SAVING...';
     });
-    HapticFeedback.mediumImpact();
+    unawaited(HapticFeedback.mediumImpact());
     final result = await widget.onSave();
     if (!mounted) return;
     result.match(

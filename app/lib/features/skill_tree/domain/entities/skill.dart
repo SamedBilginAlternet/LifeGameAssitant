@@ -35,14 +35,14 @@ class SkillStats {
   /// render three digits.
   int get level {
     final raw = (totalXp + 1).toDouble();
-    final calc = (10 * (math_log10(raw))).floor();
+    final calc = (10 * (_log10(raw))).floor();
     return calc < 0 ? 0 : (calc > 99 ? 99 : calc);
   }
 }
 
 /// log10 without pulling dart:math into the entity. Inlined so the
 /// entity stays a single import.
-double math_log10(double x) {
+double _log10(double x) {
   // ln(x) / ln(10); ln10 ≈ 2.302585092994046
   return _ln(x) / 2.302585092994046;
 }

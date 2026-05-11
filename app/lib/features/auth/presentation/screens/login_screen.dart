@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +20,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _signIn(OAuthProvider provider) async {
     if (_busy) return;
     setState(() => _busy = true);
-    HapticFeedback.lightImpact();
+    unawaited(HapticFeedback.lightImpact());
     try {
       await ref
           .read(supabaseClientProvider)

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -45,7 +47,7 @@ class _CardState extends ConsumerState<_Card> {
   }
 
   Future<void> _togglePlay() async {
-    HapticFeedback.selectionClick();
+    unawaited(HapticFeedback.selectionClick());
     if (_playing) {
       await _player.pause();
       setState(() => _playing = false);
@@ -57,9 +59,11 @@ class _CardState extends ConsumerState<_Card> {
     if (url == null) return;
     await _player.play(UrlSource(url));
     setState(() => _playing = true);
-    _player.onPlayerComplete.first.then((_) {
-      if (mounted) setState(() => _playing = false);
-    });
+    unawaited(
+      _player.onPlayerComplete.first.then((_) {
+        if (mounted) setState(() => _playing = false);
+      }),
+    );
   }
 
   @override

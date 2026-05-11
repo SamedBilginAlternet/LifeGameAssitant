@@ -15,7 +15,8 @@ class AudioService {
   Future<AudioPlayer> _player(String asset) async {
     final cached = _players[asset];
     if (cached != null) return cached;
-    final p = AudioPlayer()..setReleaseMode(ReleaseMode.stop);
+    final p = AudioPlayer();
+    await p.setReleaseMode(ReleaseMode.stop);
     await p.setSource(AssetSource(asset));
     _players[asset] = p;
     return p;

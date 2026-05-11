@@ -3,11 +3,11 @@ import 'package:intl/intl.dart';
 import 'package:memoir_log/app/theme/crt_theme.dart';
 import 'package:memoir_log/features/cover_photo/presentation/widgets/cover_photo_chip.dart';
 import 'package:memoir_log/features/cover_photo/presentation/widgets/cover_photo_view.dart';
-import 'package:memoir_log/features/voice_notes/presentation/widgets/voice_note_card.dart';
-import 'package:memoir_log/features/voice_notes/presentation/widgets/voice_note_chip.dart';
 import 'package:memoir_log/features/diary/domain/entities/entry.dart';
 import 'package:memoir_log/features/diary/presentation/widgets/pixel_meter.dart';
 import 'package:memoir_log/features/diary/presentation/widgets/typewriter_text.dart';
+import 'package:memoir_log/features/voice_notes/presentation/widgets/voice_note_card.dart';
+import 'package:memoir_log/features/voice_notes/presentation/widgets/voice_note_chip.dart';
 
 /// One day = one terminal-window page on the timeline.
 class DiaryPage extends StatelessWidget {
@@ -81,18 +81,21 @@ class _StatStrip extends StatelessWidget {
         .fold<num>(0, (sum, e) => sum + ((e['minutes'] as num?) ?? 0));
 
     final rows = <Widget>[];
-    if (commits > 0)
+    if (commits > 0) {
       rows.add(
         PixelMeter(label: 'commits', value: commits, target: 10, unit: ''),
       );
-    if (steps > 0)
+    }
+    if (steps > 0) {
       rows.add(
         PixelMeter(label: 'steps', value: steps, target: 10000, unit: ''),
       );
-    if (protein > 0)
+    }
+    if (protein > 0) {
       rows.add(
         PixelMeter(label: 'protein', value: protein, target: 180, unit: 'g'),
       );
+    }
     if (germanMinutes > 0) {
       rows.add(
         PixelMeter(

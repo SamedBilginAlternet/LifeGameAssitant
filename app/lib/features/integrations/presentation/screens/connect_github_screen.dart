@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,7 +34,7 @@ class _ConnectGithubScreenState extends ConsumerState<ConnectGithubScreen> {
       _busy = true;
       _statusLine = '> VALIDATING TOKEN...';
     });
-    HapticFeedback.mediumImpact();
+    unawaited(HapticFeedback.mediumImpact());
 
     final repo = ref.read(integrationsRepositoryProvider);
     final result = await repo.connectGithub(token: token);

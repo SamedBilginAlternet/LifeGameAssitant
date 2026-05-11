@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:go_router/go_router.dart';
 import 'package:memoir_log/app/theme/crt_theme.dart';
 import 'package:memoir_log/features/diary/domain/entities/entry.dart';
@@ -47,7 +48,7 @@ class TimelineScreen extends ConsumerWidget {
   }
 
   Future<void> _refresh(WidgetRef ref) async {
-    HapticFeedback.lightImpact();
+    unawaited(HapticFeedback.lightImpact());
     final result = await ref.read(resummarizeTodayProvider).call();
     result.match((_) => null, (_) => null);
   }
