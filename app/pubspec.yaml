@@ -52,7 +52,11 @@ dependencies:
   permission_handler: ^11.3.1
   path_provider: ^2.1.4
 
+  # Networking — used directly by integrations + cover_photo data sources.
+  dio: ^5.7.0
+
   # Misc
+  meta: ^1.15.0
   intl: ^0.20.2
   uuid: ^4.4.2
 
